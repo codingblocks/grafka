@@ -1,0 +1,59 @@
+plugins {
+    id 'org.springframework.boot' version '2.1.3.RELEASE'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.21'
+    id 'org.jetbrains.kotlin.plugin.spring' version '1.3.21'
+}
+
+ext {
+    kafkaVersion = '2.3.0'
+    avroVersion = '1.9.0'
+    confluentVersion = "5.3.1"
+}
+apply plugin: 'io.spring.dependency-management'
+
+group = 'net.codingblocks'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+    jcenter()
+    mavenCentral()
+    maven { url "https://packages.confluent.io/maven/" }
+}
+
+dependencies {
+    implementation "io.projectreactor.kafka:reactor-kafka:1.2.0.RELEASE"
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+    implementation('org.postgresql:postgresql')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    implementation 'com.graphql-java-kickstart:graphql-spring-boot-starter:5.10.0'
+    // note: subscriptions are broken in this version of graphiql - use /altair instead :(
+    implementation 'com.graphql-java-kickstart:graphiql-spring-boot-starter:5.10.0'
+    implementation 'com.graphql-java-kickstart:graphql-java-tools:5.6.1'
+    implementation "org.apache.kafka:kafka-clients:$kafkaVersion"
+    implementation "org.apache.kafka:kafka-streams:$kafkaVersion"
+    implementation "io.confluent:kafka-schema-registry-client:$confluentVersion"
+    implementation "io.confluent:kafka-streams-avro-serde:$confluentVersion"
+    implementation "io.confluent:kafka-avro-serializer:$confluentVersion"
+    implementation "org.apache.avro:avro:$avroVersion"
+    runtime 'com.graphql-java-kickstart:altair-spring-boot-starter:5.10.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xjsr305=strict']
+        jvmTarget = '1.8'
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xjsr305=strict']
+        jvmTarget = '1.8'
+    }
+}
