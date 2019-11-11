@@ -54,7 +54,7 @@ export default withApollo(({ clusterId, topic, client }) => {
       <p hidden={!sub.error}>Error: {JSON.stringify(sub.error)}</p>
       <div hidden={sub.loading || sub.error}>
         {messages.filter((i, index) => (index < maxDisplaySize)).reverse().map(m => (
-          <Message key={m.offset} message={m}/>
+          <Message key={`${m.partition}-${m.offset}`} message={m}/>
         ))}
       </div>
     </React.Fragment>

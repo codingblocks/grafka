@@ -30,7 +30,13 @@ export default ({ message }) => {
     timestamp
   } = message;
   const classes = useStyles();
-  const formattedValue = "```json\n" + JSON.stringify(JSON.parse(value), null, 2) + "\n```";
+  var formattedValue = value;
+  try {
+    formattedValue = "```json\n" + JSON.stringify(JSON.parse(value), null, 2) + "\n```";
+  } catch(e) {
+    console.log("Message value as not valid json. This might be ok.")
+  }
+
   return (
     <Card className={classes.message}>
       <Grid container justify="space-between">

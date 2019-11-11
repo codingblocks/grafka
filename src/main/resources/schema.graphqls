@@ -93,7 +93,7 @@ type KafkaNode {
 }
 
 type KafkaMessage {
-    topic: String
+    topic: String!
     key: String
     value: String!
     partition: Int!
