@@ -20,7 +20,7 @@ Finally run the app in IntelliJ (or whatever)
 Open up the site on http://localhost:3000, you can find links to "Query UI" and sample queries there. (Also on [github](https://github.com/codingblocks/grafka/blob/master/www/src/documentation/querying-graphql.md))
 
 ## Priorities:
-   * Querying
+* Querying (~90% done)
    * Clusters
    * Topics
    * Consumer Groups
@@ -28,20 +28,19 @@ Open up the site on http://localhost:3000, you can find links to "Query UI" and 
    * Connect
    * KSQL
    * Messages
-* Mutating
+* Mutating (~10% done)
    * Cluster Config
    * Topics
    * Consumer Group Resetting
    * Connectors
    * Schema
-* UI
+* UI (~5% done)
    * Near real-time updates
    * Security
    * Easy export/search topics
 
-
 ## Major components
-* Kafka
+* Kafka (only tested with 2.3)
 * Spring Boot
 * GraphQL
 * GraphQL UI (GraphiQL or Altair)
