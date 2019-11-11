@@ -69,6 +69,11 @@ export default function ButtonAppBar() {
           <ListItemText primary="Clusters" />
         </ListItem>
 
+        <ListItem button component="a" href="/preferences">
+          <ListItemIcon><Settings.icons.Settings /></ListItemIcon>
+          <ListItemText primary="Preferences" />
+        </ListItem>
+
         <Divider />
 
         <ListItem button component="a" href={Settings.queryUiUrl} target="queryUi">
@@ -76,9 +81,9 @@ export default function ButtonAppBar() {
           <ListItemText primary="Query UI" />
         </ListItem>
 
-        <ListItem button component="a" href="/preferences">
-          <ListItemIcon><Settings.icons.Settings /></ListItemIcon>
-          <ListItemText primary="Preferences" />
+        <ListItem button component="a" href="https://github.com/codingblocks/grafka" target="_blank">
+          <ListItemIcon><Settings.icons.SourceCode /></ListItemIcon>
+          <ListItemText primary="Source Code" />
         </ListItem>
       </List>
     </div>

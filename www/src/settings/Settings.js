@@ -1,5 +1,6 @@
 import {
   Close,
+  GitHub,
   Home,
   Public,
   RemoveRedEye,
@@ -20,6 +21,7 @@ export default {
     Home,
     QueryUI: Public,
     Settings,
-    Topics: Subscriptions
+    Topics: Subscriptions,
+    SourceCode: GitHub
   }
 };

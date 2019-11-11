@@ -35,7 +35,7 @@ const themes = {
 };
 
 const storage = window.localStorage;
-const defaultThemeName = "Dark";
+const defaultThemeName = "Silverhawk";
 
 const Themes = {
   getSelectableThemes: () => {
