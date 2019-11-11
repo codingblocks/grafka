@@ -4,7 +4,9 @@ Grafka provides a GraphQL interface for [Apache Kafka](https://github.com/apache
 
 The UI will remain simple, as the main value of this project is providing the GraphQL interface so you can integrate with your own projects.
 
-## Step 1: Get things running
+## Getting Started
+
+### Step 1: Get things running
 
 This project currently relies on postgres for storing configuration data. There is a docker-compose file you can run to get started:
 ```shell script
@@ -20,7 +22,7 @@ npm start
 
 Finally run the app in IntelliJ (or whatever)
 
-## Step 2: User interfaces
+### Step 2: User interfaces
 
 Grafka comes with a couple different ways to access your information.
 
@@ -33,21 +35,21 @@ Open up http://localhost:9000/altair to use the [Altair UI](https://altair.sirmu
 *GraphiQL*
 Open up http://localhost:9000/graphiql to use the [GraphiQL](https://github.com/graphql/graphiql) for GraphQL.
 
-## Step 3: GraphQL API
+### Step 3: GraphQL API
 
 The user interfaces give you some insight into your cluster, but ultimately the true value of Grafka is making it easier for you to integrate Kafka administration tasks into your own solutions.
 
 The graphql endpoint runs at http://localhost:9000/graphql by default.
 
 ## Priorities:
-* Querying (~90% done)
+* Querying (~65% done)
    * Clusters
    * Topics
    * Consumer Groups
    * Schema
+   * Messages
    * Connect
    * KSQL
-   * Messages
 * Mutating (~10% done)
    * Cluster Config
    * Topics
