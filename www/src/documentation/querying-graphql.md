@@ -70,6 +70,26 @@ mutation {
     topicListings {
       name
       internal
+      configs {
+        resource {
+          name
+          type
+          default
+        }
+        config {
+          default
+          readOnly
+          sensitive
+          name
+          source
+          synonyms {
+            name
+            value
+            source
+          }
+          value
+        }
+      }
       description {
         name
         internal

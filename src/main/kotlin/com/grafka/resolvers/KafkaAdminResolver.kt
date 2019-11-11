@@ -4,6 +4,7 @@ import com.grafka.configs.AdminClientFactory
 import com.grafka.entities.*
 import com.coxautodev.graphql.tools.GraphQLQueryResolver
 import org.apache.kafka.clients.admin.*
+import org.apache.kafka.common.config.ConfigResource
 import org.springframework.stereotype.Component
 
 @Component
@@ -35,7 +36,7 @@ class KafkaAdminResolver(private val adminClientFactory: AdminClientFactory, pri
             .listConsumerGroups()
             .all()
             .get()
-            .filter{partialConsumerGroupId == null || it.groupId().contains(partialConsumerGroupId)}
+            .filter { partialConsumerGroupId == null || it.groupId().contains(partialConsumerGroupId) }
             .map { KafkaConsumerGroupListing(clusterId, it.groupId(), it.isSimpleConsumerGroup(), this) }
 
     fun consumerGroupOffsets(clusterId: String, groupId: String) = getAdminClient(clusterId)
@@ -52,6 +53,49 @@ class KafkaAdminResolver(private val adminClientFactory: AdminClientFactory, pri
                 )
             }
 
-    fun describe(clusterId: String) = KafkaClusterDescription(getAdminClient(clusterId)
-            .describeCluster())
+    fun describeCluster(clusterId: String) = KafkaClusterDescription(
+            getAdminClient(clusterId).describeCluster()
+        )
+
+    fun topicConfigs(clusterId: String, topicNames: List<String>) = configs(
+            clusterId,
+            ConfigResource.Type.TOPIC,
+            topicNames
+    )
+
+    // TODO not hooked up to graphql? what's the "broker"?
+    fun brokerConfigs(clusterId: String, broker: List<String>) = configs(
+            clusterId,
+            ConfigResource.Type.BROKER,
+            broker
+    )
+
+    // TODO not hooked up to graphql? what's this mean?
+    fun unknownConfigs(clusterId: String, resourceName: List<String>) = configs(
+            clusterId,
+            ConfigResource.Type.UNKNOWN,
+            resourceName
+    )
+
+    private fun configs(clusterId: String, type: ConfigResource.Type, items: List<String>) = getAdminClient(clusterId)
+            .describeConfigs(
+                    items.map {
+                        ConfigResource(type, it)
+                    }
+            )
+            .all()
+            .get()
+            .map{
+                KafkaConfigCollection(it.key, it.value)
+            }
+
 }
+
+
+
+
+
+
+
+
+

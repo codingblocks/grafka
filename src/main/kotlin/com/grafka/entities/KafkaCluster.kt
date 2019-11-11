@@ -15,6 +15,6 @@ class KafkaCluster(clusterConfig: KafkaClusterConfig, private val admin: KafkaAd
     val internalTopicCount by lazy { topicListings(null).filter { it.internal }.count() }
     val consumerGroupCount by lazy { consumerGroupListings().count() }
     val schemaRegistry by lazy { schemaRegistryResolver.schemaRegistry(clusterId) }
-    val description by lazy { admin.describe(clusterId) }
+    val description by lazy { admin.describeCluster(clusterId) }
 }
 

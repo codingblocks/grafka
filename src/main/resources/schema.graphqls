@@ -50,6 +50,7 @@ type KafkaTopicListing {
     name: String!
     internal: Boolean!
     description: KafkaTopicDescription!
+    configs: KafkaConfigCollection!
     consumerGroups(partialConsumerGroupId: String): [KafkaConsumerGroupListing!]!
     schema: KafkaSchemaRegistrySubject
 }
@@ -122,4 +123,31 @@ type KafkaSchemaRegistrySubjectMetadata {
 type KafkaAclOperation {
     code: String
     unknown: Boolean
+}
+
+type KafkaConfigCollection {
+    resource: KafkaConfigResource!
+    config: [KafkaConfigEntry]!
+}
+
+type KafkaConfigResource {
+    name: String!
+    default: Boolean!
+    type: String!
+}
+
+type KafkaConfigEntry {
+    default: Boolean!
+    readOnly: Boolean!
+    sensitive: Boolean!
+    name: String!
+    source: String!
+    synonyms: [KafkaConfigSynonym]!
+    value: String!
+}
+
+type KafkaConfigSynonym {
+    name: String!
+    value: String!
+    source: String!
 }
