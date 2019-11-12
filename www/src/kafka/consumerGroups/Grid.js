@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import MaterialTable from "material-table";
 import tableIcons from "../../settings/TableIcons";
 import CachedGraphQLRequester from "../../GraphQL";
-import { Paper, makeStyles, TextareaAutosize, Link } from "@material-ui/core";
+import { Paper, makeStyles, Link } from "@material-ui/core";
 import Settings from "../../settings/Settings";
 import Toast from "../../Toast";
 
