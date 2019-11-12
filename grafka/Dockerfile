@@ -12,5 +12,5 @@ RUN ./gradlew build
 FROM openjdk:8
 WORKDIR APP_HOME=/app
 COPY --from=build /app/build/libs/grafka-0.0.1-SNAPSHOT.jar .
-EXPOSE 8080
+EXPOSE 9000
 CMD ["java","-jar", "grafka-0.0.1-SNAPSHOT.jar"]

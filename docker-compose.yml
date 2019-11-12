@@ -15,5 +15,7 @@ services:
   api:
     build:
       context: grafka
+    environment:
+      - "SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres"
     ports:
-      - "9000:8080"
+      - "9000:9000"
