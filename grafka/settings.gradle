@@ -3,4 +3,4 @@ pluginManagement {
 		gradlePluginPortal()
 	}
 }
-rootProject.name = 'kotlin-graphql'
+rootProject.name = 'grafka'
