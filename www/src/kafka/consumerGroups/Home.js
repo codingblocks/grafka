@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import RefreshButton from "../../RefreshButton";
 import Grid from "./Grid";
 import CachedGraphQLRequester from "../../GraphQL";
-import { Storage } from "@material-ui/icons/";
 import Settings from "../../settings/Settings";
 
 export default function Home({ match: { params: {clusterId} }} ) {
