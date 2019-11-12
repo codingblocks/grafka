@@ -51,7 +51,7 @@ export default withApollo(({ clusterId, topic, client }) => {
     <React.Fragment>
       <LinearProgress variant="query" hidden={!sub.loading} />
       <p hidden={!sub.loading}>This can take a while to start...</p>
-      <p hidden={!sub.error}>Error: {JSON.stringify(sub.error)}</p>
+      <p hidden={!sub.error}>Error: {JSON.stringify(sub.error)} (Note: what are your serde/deserde configs if you have a Schema Registry configured?)</p>
       <div hidden={sub.loading || sub.error}>
         {messages.filter((i, index) => (index < maxDisplaySize)).reverse().map(m => (
           <Message key={`${m.partition}-${m.offset}`} message={m}/>

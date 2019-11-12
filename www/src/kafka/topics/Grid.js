@@ -1,10 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import MaterialTable from "material-table";
 import tableIcons from "../../settings/TableIcons";
-import CachedGraphQLRequester from "../../GraphQL";
 import { Paper, makeStyles } from "@material-ui/core";
 import Settings from "../../settings/Settings";
-import Toast from "../../Toast";
 import Link from "@material-ui/core/Link";
 
 const useStyles = makeStyles({
@@ -16,32 +14,15 @@ const useStyles = makeStyles({
   }
 });
 
-export default function Grid({ results, dataChangeHandler }) {
-  const defaultToast = { message: "", open: false, closeHandler: () => {} };
-  const [toast, setToast] = useState(defaultToast);
-
-  const onAction = (query, variables) =>
-    new Promise((resolve, reject) => {
-      const graphql = CachedGraphQLRequester({
-        query,
-        variables,
-        success: () => {
-          dataChangeHandler();
-          resolve();
-        },
-        failure: message => {
-          setToast({
-            message: "Error: " + message,
-            open: true,
-            closeHandler: () => setToast(defaultToast)
-          });
-          reject();
-        }
-      });
-      graphql.mutate();
-    });
-
+export default function Grid({ results }) {
   const classes = useStyles();
+  // ugh, hate mutating args...
+  results.forEach(r => {
+    if(r.configs && r.configs.config) {
+      r.configs.config.forEach(c => r[c.name] = c.value);
+    }
+    r.partitionCount = r.description.partitions.length;
+  });
   return (
     <React.Fragment>
       <MaterialTable
@@ -65,26 +46,44 @@ export default function Grid({ results, dataChangeHandler }) {
             )
           },
           {
+            title: "Partitions",
+            field: "partitionCount"
+          },
+          {
+            title: "Cleanup Policy",
+            field: "cleanup.policy"
+          },
+          {
+            title: "Min In Sync Replicas",
+            field: "min.insync.replicas"
+          },
+          {
+            title: "Retention",
+            field: "retention.ms",
+            render: v => {
+                if(v["retention.ms"] === "-1") {
+                  return "Infinite";
+                }
+                return `${v["retention.ms"]}ms (${v["retention.ms"] / (1000 * 60 * 60 * 24)} days)`;
+              }
+          },
+          {
+            title: "Retention Bytes",
+            field: "retention.bytes",
+            render: v => {
+              if(v["retention.bytes"] === "-1") {
+                return "Infinite";
+              }
+              return `${v["retention.bytes"]}B (${v["retention.ms"] / (1024)}MB)`;
+            }
+          },
+          {
             title: "Internal",
             field: "internal",
             render: v => (v.interal ? "Yes" : "No")
           }
         ]}
         data={results}
-        editable={{
-          onRowDelete: oldData =>
-            onAction(`mutation { deleteCluster(id:"${oldData.clusterId}") }`),
-          onRowAdd: newData =>
-            onAction(
-              `mutation($name: String!, $config: String!) { newCluster(name: $name, config: $config) { id name config }}`,
-              { name: newData.name, config: newData.config }
-            )
-        }}
-      />
-      <Toast
-        message={toast.message}
-        open={toast.open}
-        closeHandler={toast.closeHandler}
       />
     </React.Fragment>
   );

@@ -15,6 +15,17 @@ export default function Home({ match: { params: {clusterId} }} ) {
           clusterId
           name
           internal
+          configs {
+            config {
+              name
+              value
+            }
+          }
+          description {
+            partitions {
+              partition
+            }
+          }
         }
       }
     }`,
@@ -22,6 +33,7 @@ export default function Home({ match: { params: {clusterId} }} ) {
     setData: d => setData(d),
     failure: e => setErrorMessage(e)
   });
+
   const [data, setData] = useState(graphql.initialData());
   const [errorMessage, setErrorMessage] = useState(null);
   useEffect(() => { graphql.refresh() }, []); // TODO warning!?
