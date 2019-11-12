@@ -1,6 +1,19 @@
-version: "2"
+version: "3.4"
 services:
   db:
     image: postgres
     ports:
       - "5432:5432"
+  www:
+    depends_on:
+      - db
+      - api
+    build:
+      context: www
+    ports:
+      - "3000:80"
+  api:
+    build:
+      context: grafka
+    ports:
+      - "9000:8080"
