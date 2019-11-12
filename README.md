@@ -6,23 +6,13 @@ The UI will remain simple, as the main value of this project is providing the Gr
 
 ## Getting Started
 
-### Step 1: Get things running
+The easiest way to get up and running is to simply start up the provided docker-compose file. This will start up the site at http://localhost:3000:
 
-This project currently relies on postgres for storing configuration data. There is a docker-compose file you can run to get started:
 ```shell script
 docker-compose up -d
 ```
 
-Now you can run the UI:
-```shell script
-cd www
-npm install
-npm start
-```
-
-Finally run the app in IntelliJ (or whatever)
-
-### Step 2: User interfaces
+### User interfaces
 
 Grafka comes with a couple different ways to access your information.
 
@@ -35,7 +25,7 @@ Open up http://localhost:9000/altair to use the [Altair UI](https://altair.sirmu
 *GraphiQL*
 Open up http://localhost:9000/graphiql to use the [GraphiQL](https://github.com/graphql/graphiql) for GraphQL.
 
-### Step 3: GraphQL API
+### GraphQL API
 
 The user interfaces give you some insight into your cluster, but ultimately the true value of Grafka is making it easier for you to integrate Kafka administration tasks into your own solutions.
 
@@ -67,6 +57,33 @@ The graphql endpoint runs at http://localhost:9000/graphql by default.
 * GraphQL
 * GraphQL UI (GraphiQL or Altair)
 * Postgres
+
+## Working locally:
+
+If you're trying to work on the site, then I recommend starting up docker-compose like above, but then stopping the services you want to work on. For example, this will shut down the website and the spring component so you can run them locally instead.
+
+```shell script
+docker-compose up -d
+docker-compose stop www
+docker-compose stop api
+```
+
+Now you can run the UI independently:
+
+```shell script
+cd www
+npm install
+npm start
+```
+
+And you can open up the "grafka" subfolder in an editor like IntelliJ or run something like...
+
+```shell script
+cd grafka
+gradle build
+```
+
+That's it!
 
 ## Troubleshooting:
 
