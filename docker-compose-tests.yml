@@ -1,0 +1,32 @@
+# docker-compose -f docker-compose-tests.yml up --build --abort-on-container-exit
+# note: this returns the same exit code as the container, making it perfect for ci
+version: "3"
+services:
+  test:
+    build:
+      context: integration-tests
+    command: dockerize -wait tcp://db:5432 -wait tcp://www:3000 -wait tcp://api:9000/graphiql -timeout 30s sh -c "npm run test"
+    environment:
+      - "GRAPHQL_ENDPOINT=http://api:9000/"
+  ## Services under test
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+  www:
+    depends_on:
+      - db
+      - api
+    build:
+      context: www
+    ports:
+      - "3000:3000"
+  api:
+    build:
+      context: grafka
+    environment:
+      - "SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres"
+    ports:
+      - "9000:9000"
+
+  ## TODO Kafka, Zookeeper, Schema Registry

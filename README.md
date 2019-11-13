@@ -83,7 +83,12 @@ cd grafka
 gradle build
 ```
 
-That's it!
+## Testing
+
+There is a docker-compose file setup for running integration tests. You can run it like...
+```shell script
+docker-compose -f docker-compose-tests.yml up --build --abort-on-container-exit
+```
 
 ## Troubleshooting:
 
