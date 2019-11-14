@@ -21,9 +21,16 @@ class KafkaAclOperationTest {
 
     // TODO parameterized tests for all types? https://www.baeldung.com/junit-5-kotlin
     @Test
-    fun `code 1 acl operation sets to known ANY code`() {
-        val aclOperation = AclOperation.fromCode(1.toByte())
-        assertFalse(KafkaAclOperation(aclOperation).unknown)
-        assertEquals("ANY", KafkaAclOperation(aclOperation).code)
+    fun `acl operation numeric code gets set to known code`() {
+        // TODO should be able to do this with ParameterizedTest/CsvSource but IntelliJ isn't seeing it?
+        val args = listOf("1,ANY","2,ALL","3,READ","4,WRITE","5,CREATE","6,DELETE","7,ALTER","8,DESCRIBE","9,CLUSTER_ACTION","10,DESCRIBE_CONFIGS","11,ALTER_CONFIGS","12,IDEMPOTENT_WRITE")
+
+        args.forEach{
+            val parts = it.split(",")
+            val aclOperation = AclOperation.fromCode(parts[0].toByte())
+            assertFalse(KafkaAclOperation(aclOperation).unknown)
+            assertEquals(parts[1], KafkaAclOperation(aclOperation).code)
+        }
+
     }
 }

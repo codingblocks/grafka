@@ -1,0 +1,171 @@
+schema {
+    query: Query
+    subscription: Subscription
+    mutation: Mutation
+}
+
+type Query {
+    clusters(clusterId: ID): [KafkaCluster]
+    consumerGroupListings(clusterId: ID!, partialConsumerGroupId: String): [KafkaConsumerGroupListing]!
+    topicListings(clusterId: ID!, partialTopicName: String): [KafkaTopicListing]!
+    schemaRegistry(clusterId: ID): KafkaSchemaRegistry
+    schemaRegistryMode(clusterId: ID): String
+    schemaCompatibilityMode(clusterId: ID!, subject: String!): String!
+    schemaRegistrySubjects(clusterId: ID!): [KafkaSchemaRegistrySubject]
+    schemaMetadata(clusterId: ID!, subject: String!): KafkaSchemaRegistrySubjectMetadata
+    consumerGroupOffsets(clusterId: String!, groupId: String!): [KafkaOffset!]!
+}
+
+type Mutation {
+    newCluster(name: String!, config: String!): KafkaCluster!
+    deleteCluster(clusterId: ID!): Boolean
+    updateCluster(clusterId: String!, name: String!, config: String!): KafkaCluster!
+}
+
+type Subscription {
+    messages(clusterId: ID!, topic:String!, latchSize:Int!, latchTimeoutMs:Int!): [KafkaMessage!]!
+}
+
+type KafkaCluster {
+    clusterId: ID!
+    description: KafkaClusterDescription
+    config: String!
+    consumerGroupCount: Int!
+    consumerGroupListings(partialConsumerGroupId: String): [KafkaConsumerGroupListing]!
+    internalTopicCount: Int!
+    name: String!
+    schemaRegistry: KafkaSchemaRegistry
+    topicListings(partialTopicName: String): [KafkaTopicListing!]!
+    totalTopicCount: Int!
+}
+
+type KafkaClusterDescription {
+    nodes: [KafkaNode]!
+    controller: KafkaNode!
+    authorizedOperations: [KafkaAclOperation!]!
+}
+
+type KafkaTopicListing {
+    clusterId: ID!
+    name: String!
+    internal: Boolean!
+    description: KafkaTopicDescription!
+    configs: KafkaConfigCollection!
+    consumerGroups(partialConsumerGroupId: String): [KafkaConsumerGroupListing!]!
+    schema: KafkaSchemaRegistrySubject
+}
+
+type KafkaConsumerGroupListing {
+    clusterId: ID!
+    groupId: String!
+    simpleConsumerGroup: Boolean!
+    offsets: [KafkaOffset!]!
+}
+
+type KafkaOffset {
+    partition: Int!
+    topicName: String!
+    leaderEpoch: Int
+    metadata: String!
+    offset: Int!
+}
+
+type KafkaTopicDescription {
+    name: String!,
+    internal: Boolean!,
+    partitions: [KafkaTopicPartitionInfo]!
+    authorizedOperations: [KafkaAclOperation!]!
+}
+
+type KafkaTopicPartitionInfo {
+    partition: Int!
+    leader: KafkaNode!
+    replicas: [KafkaNode]!
+    isr: [KafkaNode]!
+}
+
+type KafkaNode {
+    id: Int!
+    idString: String!
+    host: String!
+    port: Int!
+    rack: String!
+}
+
+type KafkaMessage {
+    topic: String!
+    key: String
+    value: String!
+    partition: Int!
+    offset: Long!
+    timestampType: String
+    timestamp: Long
+    leaderEpoch: Int
+}
+
+type KafkaSchemaRegistry {
+    mode: String!
+    subjects: [KafkaSchemaRegistrySubject!]!
+}
+
+type KafkaSchemaRegistrySubject {
+    subject: String!
+    metadata: KafkaSchemaRegistrySubjectMetadata
+    compatibilityMode: String!
+}
+
+type KafkaSchemaRegistrySubjectMetadata {
+    id: Int!
+    version: Int!
+    schema: String!
+}
+
+type KafkaAclOperation {
+    code: String
+    unknown: Boolean
+}
+
+type KafkaConfigCollection {
+    resource: KafkaConfigResource!
+    config: [KafkaConfigEntry]!
+}
+
+type KafkaConfigResource {
+    name: String!
+    default: Boolean!
+    type: String!
+}
+
+type KafkaConfigEntry {
+    default: Boolean!
+    readOnly: Boolean!
+    sensitive: Boolean!
+    name: String!
+    source: String!
+    synonyms: [KafkaConfigSynonym]!
+    value: String!
+}
+
+type KafkaConfigSynonym {
+    name: String!
+    value: String!
+    source: String!
+}
+
+type KafkaNewTopicRequest {
+    name: String!,
+    partitionCount: Int!,
+    replicationFactor: Int!,
+    configs: [KafkaTopicConfig!],
+    replicationAssignments: [KafkaReplicationAssignment!],
+}
+
+type KafkaReplicationAssignment {
+    partition: Int!,
+    assignments: [Int!]!
+}
+
+type KafkaTopicConfig {
+    name: String!,
+    value: String!
+}
