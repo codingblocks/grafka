@@ -41,7 +41,7 @@ dependencies {
     implementation "io.confluent:kafka-avro-serializer:$confluentVersion"
     implementation "org.apache.avro:avro:$avroVersion"
     runtime 'com.graphql-java-kickstart:altair-spring-boot-starter:5.10.0'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 compileKotlin {
@@ -56,8 +56,4 @@ compileTestKotlin {
         freeCompilerArgs = ['-Xjsr305=strict']
         jvmTarget = '1.8'
     }
-}
-
-test {
-    useJUnitPlatform()
 }
