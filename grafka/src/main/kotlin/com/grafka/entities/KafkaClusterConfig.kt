@@ -8,12 +8,12 @@ import javax.persistence.*
 class KafkaClusterConfig(
         @Id
         @org.hibernate.annotations.Type(type = "org.hibernate.type.PostgresUUIDType")
-        @Column(name = "cluster_id")
+        @Column(name = "cluster_id", nullable = false)
         var clusterId: UUID = UUID(0, 0),
 
-        @Column(name = "name")
+        @Column(name = "name", nullable = false)
         var name: String = "",
 
-        @Column(name = "config", length = 4096)
+        @Column(name = "config", length = 4096, nullable = false)
         var config: String = ""
 )
