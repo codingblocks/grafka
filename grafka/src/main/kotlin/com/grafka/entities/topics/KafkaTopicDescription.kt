@@ -1,5 +1,6 @@
-package com.grafka.entities;
+package com.grafka.entities.topics;
 
+import com.grafka.entities.KafkaAclOperation
 import org.apache.kafka.clients.admin.TopicDescription
 
 // TODO val authorizedOperations: ImmutableSet<AuthorizedOperations>

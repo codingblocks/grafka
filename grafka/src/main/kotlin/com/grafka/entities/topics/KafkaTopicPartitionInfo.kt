@@ -1,5 +1,6 @@
-package com.grafka.entities
+package com.grafka.entities.topics
 
+import com.grafka.entities.KafkaNode
 import org.apache.kafka.common.TopicPartitionInfo
 
 class KafkaTopicPartitionInfo(val partition: Int, val leader: KafkaNode, val replicas: List<KafkaNode>, val isr: List<KafkaNode>) {

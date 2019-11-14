@@ -1,4 +1,4 @@
-package com.grafka.entities
+package com.grafka.entities.topics
 
 import com.grafka.resolvers.KafkaAdminResolver
 import com.grafka.resolvers.SchemaRegistryResolver

@@ -151,3 +151,21 @@ type KafkaConfigSynonym {
     value: String!
     source: String!
 }
+
+type KafkaNewTopicRequest {
+    name: String!,
+    partitionCount: Int!,
+    replicationFactor: Int!,
+    configs: [KafkaTopicConfig!],
+    replicationAssignments: [KafkaReplicationAssignment!],
+}
+
+type KafkaReplicationAssignment {
+    partition: Int!,
+    assignments: [Int!]!
+}
+
+type KafkaTopicConfig {
+    name: String!,
+    value: String!
+}

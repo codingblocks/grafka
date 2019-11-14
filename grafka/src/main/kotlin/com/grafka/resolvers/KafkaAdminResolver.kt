@@ -3,6 +3,8 @@ package com.grafka.resolvers
 import com.grafka.configs.AdminClientFactory
 import com.grafka.entities.*
 import com.coxautodev.graphql.tools.GraphQLQueryResolver
+import com.grafka.entities.topics.KafkaTopicDescription
+import com.grafka.entities.topics.KafkaTopicListing
 import org.apache.kafka.clients.admin.*
 import org.apache.kafka.common.config.ConfigResource
 import org.springframework.stereotype.Component
