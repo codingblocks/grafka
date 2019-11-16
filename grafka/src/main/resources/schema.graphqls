@@ -6,7 +6,7 @@ schema {
 
 type Query {
     clusters(clusterId: ID): [KafkaCluster]
-    consumerGroupListings(clusterId: ID!, partialConsumerGroupId: String): [KafkaConsumerGroupListing]!
+    consumerGroupListings(clusterId: ID!, partialConsumerGroupId: String, topicName: String): [KafkaConsumerGroupListing]!
     topicListings(clusterId: ID!, partialTopicName: String): [KafkaTopicListing]!
     schemaRegistry(clusterId: ID): KafkaSchemaRegistry
     schemaRegistryMode(clusterId: ID): String
