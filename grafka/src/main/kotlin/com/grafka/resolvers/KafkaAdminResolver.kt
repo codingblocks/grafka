@@ -72,27 +72,27 @@ class KafkaAdminResolver(private val adminClientFactory: AdminClientFactory, pri
             getAdminClient(clusterId).describeCluster()
     )
 
-    fun topicConfigs(clusterId: String, topicNames: List<String>) = configs(
+    fun topicConfigs(clusterId: String, topicNames: List<String>) = clusterConfigs(
             clusterId,
             ConfigResource.Type.TOPIC,
             topicNames
     )
 
     // TODO not hooked up to graphql? what's the "broker"?
-    fun brokerConfigs(clusterId: String, broker: List<String>) = configs(
+    fun brokerConfigs(clusterId: String, broker: List<String>) = clusterConfigs(
             clusterId,
             ConfigResource.Type.BROKER,
             broker
     )
 
     // TODO not hooked up to graphql? what's this mean?
-    fun unknownConfigs(clusterId: String, resourceName: List<String>) = configs(
+    fun unknownConfigs(clusterId: String, resourceName: List<String>) = clusterConfigs(
             clusterId,
             ConfigResource.Type.UNKNOWN,
             resourceName
     )
 
-    private fun configs(clusterId: String, type: ConfigResource.Type, items: List<String>) = getAdminClient(clusterId)
+    private fun clusterConfigs(clusterId: String, type: ConfigResource.Type, items: List<String>) = getAdminClient(clusterId)
             .describeConfigs(
                     items.map {
                         ConfigResource(type, it)
@@ -104,16 +104,11 @@ class KafkaAdminResolver(private val adminClientFactory: AdminClientFactory, pri
                 KafkaConfigCollection(it.key, it.value)
             }
 
-    fun description(clusterId: String, name: String) = kafkaTopicDescriptions(clusterId, name)
-    fun configs(clusterId: String, name: String) {
-        topicConfigs(clusterId, listOf(name))[0]
-    }
-
-    fun schema(clusterId: String, name: String) {
-        schemaRegistryResolver.schemaRegistrySubject(clusterId, name)
-    }
-
-    fun consumerGroups(clusterId: String, name: String, partialConsumerGroupId: String? = null) = consumerGroupListings(clusterId, partialConsumerGroupId, name)
+    // TODO these are internals...probably shouldn't be here
+    internal fun clusterDescription(clusterId: String, name: String) = kafkaTopicDescriptions(clusterId, name)
+    internal fun clusterConfigs(clusterId: String, name: String) = topicConfigs(clusterId, listOf(name))[0]
+    internal fun clusterSchema(clusterId: String, name: String) = schemaRegistryResolver.schemaRegistrySubject(clusterId, name)
+    internal fun clusterConsumerGroups(clusterId: String, name: String, partialConsumerGroupId: String? = null) = consumerGroupListings(clusterId, partialConsumerGroupId, name)
 }
 
 
