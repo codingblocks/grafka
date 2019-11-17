@@ -5,10 +5,6 @@ const url = process.env.GRAPHQL_ENDPOINT || `http://localhost:9000/`; // TODO
 const request = require("supertest")(url);
 const read = file => require('fs').readFileSync(`./resources/${file}`, `utf-8`);
 
-
-// TODO Got to get rid of this, how to better check that kafka is ready?
-require('system-sleep')(60 * 1000);
-
 describe("Grafka", () => {
 
   it("returns an empty array of clusters", emptyClusterDone => {
