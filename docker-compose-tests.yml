@@ -1,27 +1,33 @@
-# docker-compose -f docker-compose-tests.yml up --build --abort-on-container-exit
-# note: this returns the same exit code as the container, making it perfect for ci
-
 version: "3"
 services:
   test:
     build:
       context: integration-tests
-    command: dockerize -wait tcp://db:5432 -wait tcp://www:3000 -wait tcp://api:9000/graphiql -timeout 30s sh -c "npm run test"
+    command: dockerize -wait tcp://db:5432 -wait tcp://www:3000 -wait tcp://api:9000/graphiql -timeout 360s sh -c "npm run test"
     environment:
       - "GRAPHQL_ENDPOINT=http://api:9000/"
+    depends_on:
+      - db
+      - api
+      - www
+      - kafka1
+
   ## Services under test
   db:
     image: postgres
     ports:
       - "5432:5432"
-  www:
     depends_on:
-      - db
-      - api
+      - kafka1
+  www:
     build:
       context: www
     ports:
       - "3000:3000"
+    depends_on:
+      - db
+      - api
+      - kafka1
   api:
     build:
       context: grafka
@@ -29,5 +35,55 @@ services:
       - "SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres"
     ports:
       - "9000:9000"
+    depends_on:
+      - db
+      - kafka1
+      - schemaregistry
 
-  ## TODO Kafka, Zookeeper, Schema Registry
+  # Kafka
+  zookeeper:
+    image: confluentinc/cp-zookeeper:5.3.1
+    restart: always
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: "2181"
+      ZOOKEEPER_TICK_TIME: "2000"
+      ZOOKEEPER_SERVERS: "zookeeper:22888:23888"
+    ports:
+      - "2181:2181"
+
+  kafka1:
+    image: confluentinc/cp-enterprise-kafka:5.3.1
+    depends_on:
+      - zookeeper
+    ports:
+      # Exposes 29092 for external connections to the broker
+      # Use kafka1:9092 for connections internal on the docker network
+      # See https://rmoff.net/2018/08/02/kafka-listeners-explained/ for details
+      - "29092:29092"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_BROKER_ID: 1
+      KAFKA_BROKER_RACK: "r1"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_DELETE_TOPIC_ENABLE: "true"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_SCHEMA_REGISTRY_URL: "schemaregistry:8081"
+      #KAFKA_LOG4J_ROOT_LOGLEVEL: INFO
+      KAFKA_JMX_PORT: 9991
+
+  schemaregistry:
+    image: confluentinc/cp-schema-registry:5.3.1
+    restart: always
+    depends_on:
+      - zookeeper
+      - kafka1
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: "zookeeper:2181"
+      SCHEMA_REGISTRY_HOST_NAME: schemaregistry
+      SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
+    ports:
+      - 8081:8081

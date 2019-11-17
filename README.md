@@ -32,6 +32,7 @@ The user interfaces give you some insight into your cluster, but ultimately the 
 The graphql endpoint runs at http://localhost:9000/graphql by default.
 
 ## Priorities:
+
 * Querying (~65% done)
    * Clusters
    * Topics
@@ -52,6 +53,7 @@ The graphql endpoint runs at http://localhost:9000/graphql by default.
    * Easy export/search topics
 
 ## Major components
+
 * Kafka (only tested with 2.3)
 * Spring Boot
 * GraphQL
@@ -87,7 +89,7 @@ gradle build
 
 There is a docker-compose file setup for running integration tests. You can run it like...
 ```shell script
-docker-compose -f docker-compose-tests.yml up --build --abort-on-container-exit
+docker-compose -f docker-compose-tests.yml up --build --abort-on-container-exit -V
 ```
 
 ## Troubleshooting:

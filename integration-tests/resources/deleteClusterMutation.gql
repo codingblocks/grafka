@@ -1,0 +1,3 @@
+mutation($clusterId: ID!) {
+    deleteCluster(clusterId: $clusterId)
+}
