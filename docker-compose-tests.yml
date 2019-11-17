@@ -3,7 +3,7 @@ services:
   test:
     build:
       context: integration-tests
-    command: dockerize -wait tcp://db:5432 -wait tcp://www:3000 -wait tcp://api:9000/graphiql -timeout 360s sh -c "npm run test"
+    command: dockerize -wait tcp://db:5432 -wait tcp://www:3000 -wait tcp://api:9000 -timeout 360s sh -c "npm run test"
     environment:
       - "GRAPHQL_ENDPOINT=http://api:9000/"
     depends_on:
