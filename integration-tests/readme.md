@@ -5,7 +5,7 @@ To run the tests locally, just run the docker file with the command below. this 
 ```bash
 # from the root directory
 cd ../ 
-docker-compose -f docker-compose-tests.yml up --build --abort-on-container-exit
+docker-compose -f docker-compose-tests.yml up --build --abort-on-container-exit -V
 ```
 
 ## Developing locally
