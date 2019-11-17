@@ -22,7 +22,7 @@ class KafkaAdminResolver(private val adminClientFactory: AdminClientFactory, pri
             .listings()
             .get()
             .filter { partialTopicName == null || it.name().contains(partialTopicName) }
-            .map { KafkaTopicListing(clusterId, it.name(), it.isInternal, this, schemaRegistryResolver) }
+            .map { KafkaTopicListing(clusterId, it.name(), it.isInternal, this) }
 
     fun kafkaTopicDescriptions(clusterId: String, topic: String) = KafkaTopicDescription.create(
             getAdminClient(clusterId)
@@ -34,12 +34,25 @@ class KafkaAdminResolver(private val adminClientFactory: AdminClientFactory, pri
                     .get()
     )
 
-    fun consumerGroupListings(clusterId: String, partialConsumerGroupId: String? = null) = getAdminClient(clusterId)
-            .listConsumerGroups()
-            .all()
-            .get()
-            .filter { partialConsumerGroupId == null || it.groupId().contains(partialConsumerGroupId) }
-            .map { KafkaConsumerGroupListing(clusterId, it.groupId(), it.isSimpleConsumerGroup(), this) }
+    fun consumerGroupListings(clusterId: String, partialConsumerGroupId: String? = null, topicName: String? = null): List<KafkaConsumerGroupListing> {
+        var groups = getAdminClient(clusterId)
+                .listConsumerGroups()
+                .all()
+                .get()
+
+        if (partialConsumerGroupId != null) {
+            groups = groups.filter { it.groupId().contains(partialConsumerGroupId) }
+        }
+
+        var result = groups
+                .map { KafkaConsumerGroupListing(clusterId, it.groupId(), it.isSimpleConsumerGroup(), this) }
+
+        if (topicName != null) {
+            result = result.filter { it.offsets().any { o -> o.topicName == topicName } }
+        }
+
+        return result
+    }
 
     fun consumerGroupOffsets(clusterId: String, groupId: String) = getAdminClient(clusterId)
             .listConsumerGroupOffsets(groupId)
@@ -57,29 +70,29 @@ class KafkaAdminResolver(private val adminClientFactory: AdminClientFactory, pri
 
     fun describeCluster(clusterId: String) = KafkaClusterDescription(
             getAdminClient(clusterId).describeCluster()
-        )
+    )
 
-    fun topicConfigs(clusterId: String, topicNames: List<String>) = configs(
+    fun topicConfigs(clusterId: String, topicNames: List<String>) = clusterConfigs(
             clusterId,
             ConfigResource.Type.TOPIC,
             topicNames
     )
 
     // TODO not hooked up to graphql? what's the "broker"?
-    fun brokerConfigs(clusterId: String, broker: List<String>) = configs(
+    fun brokerConfigs(clusterId: String, broker: List<String>) = clusterConfigs(
             clusterId,
             ConfigResource.Type.BROKER,
             broker
     )
 
     // TODO not hooked up to graphql? what's this mean?
-    fun unknownConfigs(clusterId: String, resourceName: List<String>) = configs(
+    fun unknownConfigs(clusterId: String, resourceName: List<String>) = clusterConfigs(
             clusterId,
             ConfigResource.Type.UNKNOWN,
             resourceName
     )
 
-    private fun configs(clusterId: String, type: ConfigResource.Type, items: List<String>) = getAdminClient(clusterId)
+    private fun clusterConfigs(clusterId: String, type: ConfigResource.Type, items: List<String>) = getAdminClient(clusterId)
             .describeConfigs(
                     items.map {
                         ConfigResource(type, it)
@@ -87,10 +100,15 @@ class KafkaAdminResolver(private val adminClientFactory: AdminClientFactory, pri
             )
             .all()
             .get()
-            .map{
+            .map {
                 KafkaConfigCollection(it.key, it.value)
             }
 
+    // TODO these are internals...probably shouldn't be here
+    internal fun clusterDescription(clusterId: String, name: String) = kafkaTopicDescriptions(clusterId, name)
+    internal fun clusterConfigs(clusterId: String, name: String) = topicConfigs(clusterId, listOf(name))[0]
+    internal fun clusterSchema(clusterId: String, name: String) = schemaRegistryResolver.schemaRegistrySubject(clusterId, name)
+    internal fun clusterConsumerGroups(clusterId: String, name: String, partialConsumerGroupId: String? = null) = consumerGroupListings(clusterId, partialConsumerGroupId, name)
 }
 
 
