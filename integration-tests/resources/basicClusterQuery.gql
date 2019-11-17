@@ -1,0 +1,24 @@
+{
+    clusters {
+        clusterId
+        config
+        description {
+            nodes {
+                id
+                host
+                port
+                rack
+            }
+            controller {
+                id
+                host
+                port
+                rack
+            }
+            authorizedOperations {
+                code
+                unknown
+            }
+        }
+    }
+}

@@ -1,6 +1,3 @@
-# docker-compose -f docker-compose-tests.yml up --build --abort-on-container-exit
-# note: this returns the same exit code as the container, making it perfect for ci
-
 version: "3"
 services:
   test:

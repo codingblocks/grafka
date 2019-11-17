@@ -1,0 +1,7 @@
+mutation($name:String!, $config:String!) {
+    newCluster(name: $name, config: $config) {
+        clusterId
+        name
+        config
+    }
+}
