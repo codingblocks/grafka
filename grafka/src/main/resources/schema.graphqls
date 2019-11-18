@@ -6,20 +6,28 @@ schema {
 
 type Query {
     clusters(clusterId: ID): [KafkaCluster]
+
     consumerGroupListings(clusterId: ID!, partialConsumerGroupId: String, topicName: String): [KafkaConsumerGroupListing]!
-    topicListings(clusterId: ID!, partialTopicName: String): [KafkaTopicListing]!
+    consumerGroupOffsets(clusterId: String!, groupId: String!): [KafkaOffset!]!
+
+    schemaCompatibilityMode(clusterId: ID!, subject: String!): String!
+    schemaMetadata(clusterId: ID!, subject: String!): KafkaSchemaRegistrySubjectMetadata
     schemaRegistry(clusterId: ID): KafkaSchemaRegistry
     schemaRegistryMode(clusterId: ID): String
-    schemaCompatibilityMode(clusterId: ID!, subject: String!): String!
     schemaRegistrySubjects(clusterId: ID!): [KafkaSchemaRegistrySubject]
-    schemaMetadata(clusterId: ID!, subject: String!): KafkaSchemaRegistrySubjectMetadata
-    consumerGroupOffsets(clusterId: String!, groupId: String!): [KafkaOffset!]!
+
+    topicListings(clusterId: ID!, partialTopicName: String): [KafkaTopicListing]!
 }
 
 type Mutation {
+    # Clusters
     newCluster(name: String!, config: String!): KafkaCluster!
     deleteCluster(clusterId: ID!): Boolean
     updateCluster(clusterId: String!, name: String!, config: String!): KafkaCluster!
+
+    # Topics: Note, not returning TopicListing because topic can be confirmed before it is retrievable
+    newTopicByPartitionAndReplicationFactor(clusterId: ID!, topicName: String!, partitionCount: Int!, replicationFactor: Int!, configs: [KafkaTopicConfig]): Boolean
+    newTopicByReplicationAssignments(clusterId: ID!, topicName: String!, replicationAssignments: [KafkaReplicationAssignment!], configs: [KafkaTopicConfig!]): Boolean
 }
 
 type Subscription {
@@ -152,20 +160,12 @@ type KafkaConfigSynonym {
     source: String!
 }
 
-type KafkaNewTopicRequest {
-    name: String!,
-    partitionCount: Int!,
-    replicationFactor: Int!,
-    configs: [KafkaTopicConfig!],
-    replicationAssignments: [KafkaReplicationAssignment!],
-}
-
-type KafkaReplicationAssignment {
+input KafkaReplicationAssignment {
     partition: Int!,
     assignments: [Int!]!
 }
 
-type KafkaTopicConfig {
+input KafkaTopicConfig {
     name: String!,
     value: String!
 }
