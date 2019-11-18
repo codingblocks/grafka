@@ -15,7 +15,7 @@
 
 ```graphql
 mutation {
-  newCluster(name:"name",config:"paste.your.config=here") {
+  newCluster(name: "name",config: "paste.your.config=here") {
     clusterId
     name
     config
@@ -27,7 +27,7 @@ mutation {
 
 ```graphql
 mutation {
-   updateCluster(clusterId:"paste.your.clusterId.here", name:"Memorable name", config: "paste.your.config=here") {
+   updateCluster(clusterId: "paste.your.clusterId.here", name: "Memorable name", config: "paste.your.config=here") {
        clusterId, name
    }
 }
@@ -36,7 +36,14 @@ mutation {
 *We can also delete them:*
 ```graphql
 mutation {
-   deleteCluster(clusterId:"paste.your.clusterId.here")
+   deleteCluster(clusterId: "paste.your.clusterId.here")
+}
+```
+
+*You can also create topics*
+```graphql
+mutation {
+  newTopicByPartitionAndReplicationFactor(clusterId: "paste.your.clusterId.here", topicName: "test-topic", partitionCount: 1, replicationFactor: 1)
 }
 ```
 
