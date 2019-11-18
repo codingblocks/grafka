@@ -85,6 +85,37 @@ cd grafka
 gradle build
 ```
 
+Running docker-compose up will start up a test Kafka environment for you as well. Here is a sample configuration that will work with it:
+
+```properties
+application.id=grafka
+group.id=grafka
+bootstrap.servers=localhost:29092
+
+schema.registry.url=http://localhost:8081
+
+key.serializer=org.apache.kafka.common.serialization.StringSerializer
+value.serializer=io.confluent.kafka.serializers.KafkaAvroSerializer
+
+key.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+value.deserializer=io.confluent.kafka.serializers.KafkaAvroDeserializer
+
+avro.specific.reader=true
+```
+
+Note: The schema registry configuration is currently lumped in with the cluster configuration (there's a ticket for [that](https://github.com/codingblocks/grafka/issues/15)), however you can ditch it with a config like:
+```properties
+application.id=grafka
+group.id=grafka
+bootstrap.servers=localhost:29092
+
+key.serializer=org.apache.kafka.common.serialization.StringSerializer
+value.serializer=org.apache.kafka.common.serialization.StringSerializer
+
+key.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+value.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+```
+
 ## Testing
 
 There is a docker-compose file setup for running integration tests. You can run it like...

@@ -1,7 +1,8 @@
 import React from "react";
 import gql from "graphql-tag";
-import { useSubscription } from "@apollo/react-hooks";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import {Card} from "@material-ui/core";
+import { useSubscription } from "@apollo/react-hooks";
 import { withApollo } from "@apollo/react-hoc";
 import Message from "./Message";
 
@@ -50,8 +51,11 @@ export default withApollo(({ clusterId, topic, client }) => {
   return (
     <React.Fragment>
       <LinearProgress variant="query" hidden={!sub.loading} />
-      <p hidden={!sub.loading}>This can take a while to start...</p>
-      <p hidden={!sub.error}>Error: {JSON.stringify(sub.error)} (Note: what are your serde/deserde configs if you have a Schema Registry configured?)</p>
+      <p hidden={!sub.loading}>This can take a while to start, even if the topic is empty...</p>
+      <Card hidden={!sub.error} style={{margin: 10, padding: 20}}>
+        <p>Error: {JSON.stringify(sub.error)}</p>
+        <p>Note: what are your serde/deserde configs if you have a Schema Registry configured? There is currently a defect where all topics are assumed to use the same configuration defined at the cluster level.</p>
+      </Card>
       <div hidden={sub.loading || sub.error}>
         {messages.filter((i, index) => (index < maxDisplaySize)).reverse().map(m => (
           <Message key={`${m.partition}-${m.offset}`} message={m}/>

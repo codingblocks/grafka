@@ -36,7 +36,7 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState(null);
   useEffect(() => { graphql.refresh() }, []); // TODO warning!?
 
-  const results = (data.results && data.results.clusters) ? data.results.clusters : []
+  const results = (data.results && data.results.clusters) ? data.results.clusters : [];
 
   return (
     <React.Fragment>

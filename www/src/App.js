@@ -21,6 +21,7 @@ import { WebSocketLink } from 'apollo-link-ws';
 import {split} from "apollo-link";
 import {getMainDefinition} from "apollo-utilities";
 import {InMemoryCache} from "apollo-cache-inmemory";
+import ErrorBoundary from "./settings/ErrorBoundary";
 
 const httpLink = new HttpLink({uri: Settings.graphqlUrl});
 
@@ -60,25 +61,27 @@ function App() {
           <AppBar />
           <Container maxWidth={false}>
             <CssBaseline />
-            <Switch>
-              <Route path="/kafka/clusters">
-                <KafkaClusters />
-              </Route>
-              <Route path="/kafka/:clusterId/consumer-groups" component={KafkaConsumerGroups} />
-              <Route path="/kafka/:clusterId/topics" component={KafkaTopics} />
-              <Route path="/kafka/:clusterId/:topic" component={KafkaTopic} />
-              <Route path="/preferences">
-                <Preferences
-                  themeChangedCallback={() => setTheme(getCurrentTheme())}
-                />
-              </Route>
-              <Route path="/" component={Home} />
-            </Switch>
-            <Divider />
-            <div style={{ marginTop: "20px" }}>
-              <Console />
-            </div>
-          </Container>
+            <ErrorBoundary>
+              <Switch>
+                <Route path="/kafka/clusters">
+                  <KafkaClusters />
+                </Route>
+                <Route path="/kafka/:clusterId/consumer-groups" component={KafkaConsumerGroups} />
+                <Route path="/kafka/:clusterId/topics" component={KafkaTopics} />
+                <Route path="/kafka/:clusterId/:topic" component={KafkaTopic} />
+                <Route path="/preferences">
+                  <Preferences
+                    themeChangedCallback={() => setTheme(getCurrentTheme())}
+                  />
+                </Route>
+                <Route path="/" component={Home} />
+              </Switch>
+              <Divider />
+              <div style={{ marginTop: "20px" }}>
+                <Console />
+              </div>
+              </ErrorBoundary>
+            </Container>
         </BrowserRouter>
       </MuiThemeProvider>
     </ApolloProvider>
