@@ -1,5 +1,4 @@
 import React from "react";
-import Messages from "./Messages";
 import Settings from "../../settings/Settings";
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/react-hooks";
@@ -33,11 +32,7 @@ export default function Home({
         <Settings.icons.Topics /> {topic}
       </h1>
 
-      <h2>Metadata</h2>
       {getMetaData()}
-
-      <h2>Messages</h2>
-      <Messages clusterId={clusterId} topic={topic} />
 
     </React.Fragment>
   );
@@ -48,6 +43,7 @@ const TOPIC_QUERY = gql`
     clusters(clusterId: $clusterId) {
       name
       topicListings(partialTopicName: $topic) {
+        clusterId
         name
         internal
         consumerGroups {
