@@ -8,6 +8,7 @@ import {
   Typography
 } from "@material-ui/core";
 import Messages from "./Messages";
+import Configs from "./Configs";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -52,29 +53,6 @@ export default function Home({ clusterName, topicData }) {
     .sort(p => p.partition)
     .map(p => <ul key={p.partition}>{p.display}</ul>);
 
-  // TODO source for sorting?
-  const configs = topicData.configs.config
-    .map(c => {
-      let result = `${c.name}: ${c.value}`;
-      if (c.readOnly) {
-        result += " (read only)";
-      }
-      if (c.sensitive) {
-        result += " (sensitive)";
-      }
-      if (!c.default) {
-        result += " (not default!)";
-      }
-      if (c.synonyms.length) {
-        result +=
-          ` synonyms: ` +
-          c.synonyms.map(s => `${s.name}:${s.value}`).join(", ");
-      }
-      return { source: c.source, key: c.name, value: result };
-    })
-    .sort(c => c.source + "-" + c.key)
-    .map(c => <li key={c.key}>{c.value}</li>);
-
   return (
     <Card>
       <AppBar position="static">
@@ -108,7 +86,7 @@ export default function Home({ clusterName, topicData }) {
           {partitions}
         </TabPanel>
         <TabPanel value={value} index={2}>
-          {configs}
+          <Configs configs={topicData.configs.config} />
         </TabPanel>
         <TabPanel value={value} index={3}>
           TODO

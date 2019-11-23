@@ -30,7 +30,7 @@ export default function Grid({ results }) {
     <React.Fragment>
       <MaterialTable
         icons={tableIcons}
-        title="Topics"
+        title="Configs"
         components={{
           Container: props => (
             <Paper
