@@ -9,6 +9,9 @@ import {
 } from "@material-ui/core";
 import Messages from "./Messages";
 import Configs from "./Configs";
+import Divider from "@material-ui/core/Divider";
+import Grid from "../clusters/Grid";
+import BasicDetails from "./BasicDetails";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -39,9 +42,6 @@ export default function Home({ clusterName, topicData }) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  const authorizedOperations = topicData.description.authorizedOperations
-    .map(ao => (ao.unknown ? `${ao.code} (unknown)` : ao.code))
-    .join(", ");
 
   const partitions = topicData.description.partitions
     .map(p => {
@@ -72,15 +72,7 @@ export default function Home({ clusterName, topicData }) {
       </AppBar>
       <Box>
         <TabPanel value={value} index={0}>
-          <p>Internal: {topicData.internal ? "Yes" : "No"}</p>
-          <p>Offset Count: {topicData.offsets.offsetCount}</p>
-          <p>Lifetime Offset Count: {topicData.offsets.lifetimeOffsetCount}</p>
-          <p>Min Offset: {topicData.offsets.minOffset}</p>
-          <p>Max Offset: {topicData.offsets.maxOffset}</p>
-          <p>Cluster: {clusterName}</p>
-          <p>Partitions: {topicData.offsets.partitionCount}</p>
-          <p>Consumer Groups: {topicData.consumerGroups.length}</p>
-          <p>Authorized Operations: {authorizedOperations}</p>
+          <BasicDetails clusterName={clusterName} topicData={topicData} />
         </TabPanel>
         <TabPanel value={value} index={1}>
           {partitions}
