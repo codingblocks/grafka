@@ -122,7 +122,6 @@ export default function Home({ clusterName, topicData }) {
         <TabPanel value={value} index={6}>
           <p>TODO</p>
           <ul>
-            <li>Offsets?</li>
             <li>Mutations</li>
             <li>Consumer Groups</li>
             <li>Schema</li>
