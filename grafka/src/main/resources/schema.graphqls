@@ -164,6 +164,10 @@ type KafkaConfigSynonym {
 type KafkaTopicOffsets {
     partitionOffsets: [KafkaPartitionOffsets!]!
     offsetCount: Long!
+    lifetimeOffsetCount: Long!
+    partitionCount: Long!
+    maxOffset: Long!
+    minOffset: Long!
 }
 
 type KafkaPartitionOffsets {

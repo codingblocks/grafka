@@ -93,6 +93,10 @@ mutation {
         }
         offsets {
           offsetCount
+          lifetimeOffsetCount
+          partitionCount
+          maxOffset
+          minOffset
           partitionOffsets {
             partition
             beginningOffset

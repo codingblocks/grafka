@@ -57,11 +57,6 @@ const TOPIC_QUERY = gql`
           }
         }
         configs {
-          resource {
-            name
-            default
-            type
-          }
           config {
             default
             readOnly
@@ -74,6 +69,11 @@ const TOPIC_QUERY = gql`
               source
             }
             value
+          }
+          resource {
+            name
+            default
+            type
           }
         }
         description {
@@ -102,6 +102,13 @@ const TOPIC_QUERY = gql`
               rack
             }
           }
+        }
+        offsets {
+          partitionCount
+          offsetCount
+          lifetimeOffsetCount
+          minOffset
+          maxOffset
         }
       }
     }

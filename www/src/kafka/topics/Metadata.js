@@ -3,7 +3,6 @@ import {
   AppBar,
   Box,
   Card,
-  Container,
   Tab,
   Tabs,
   Typography
@@ -96,8 +95,12 @@ export default function Home({ clusterName, topicData }) {
       <Box>
         <TabPanel value={value} index={0}>
           <p>Internal: {topicData.internal ? "Yes" : "No"}</p>
+          <p>Offset Count: {topicData.offsets.offsetCount}</p>
+          <p>Lifetime Offset Count: {topicData.offsets.lifetimeOffsetCount}</p>
+          <p>Min Offset: {topicData.offsets.minOffset}</p>
+          <p>Max Offset: {topicData.offsets.maxOffset}</p>
           <p>Cluster: {clusterName}</p>
-          <p>Partitions: {partitions.length}</p>
+          <p>Partitions: {topicData.offsets.partitionCount}</p>
           <p>Consumer Groups: {topicData.consumerGroups.length}</p>
           <p>Authorized Operations: {authorizedOperations}</p>
         </TabPanel>
