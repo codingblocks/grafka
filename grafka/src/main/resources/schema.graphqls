@@ -60,6 +60,7 @@ type KafkaTopicListing {
     description: KafkaTopicDescription!
     configs: KafkaConfigCollection!
     consumerGroups(partialConsumerGroupId: String): [KafkaConsumerGroupListing!]!
+    offsets: KafkaTopicOffsets!
     schema: KafkaSchemaRegistrySubject
 }
 
@@ -158,6 +159,18 @@ type KafkaConfigSynonym {
     name: String!
     value: String!
     source: String!
+}
+
+type KafkaTopicOffsets {
+    partitionOffsets: [KafkaPartitionOffsets!]!
+    offsetCount: Long!
+}
+
+type KafkaPartitionOffsets {
+    partition: Int!,
+    beginningOffset: Long!,
+    endOffset: Long!,
+    offsetCount: Long!
 }
 
 input KafkaReplicationAssignment {

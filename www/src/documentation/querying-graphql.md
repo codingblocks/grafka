@@ -78,11 +78,6 @@ mutation {
       name
       internal
       configs {
-        resource {
-          name
-          type
-          default
-        }
         config {
           default
           readOnly
@@ -95,6 +90,20 @@ mutation {
             source
           }
           value
+        }
+        offsets {
+          offsetCount
+          partitionOffsets {
+            partition
+            beginningOffset
+            endOffset
+            offsetCount
+          }
+        }
+        resource {
+          name
+          type
+          default
         }
       }
       description {
