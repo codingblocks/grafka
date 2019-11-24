@@ -9,8 +9,6 @@ import {
 } from "@material-ui/core";
 import Messages from "./Messages";
 import Configs from "./Configs";
-import Divider from "@material-ui/core/Divider";
-import Grid from "../clusters/Grid";
 import BasicDetails from "./BasicDetails";
 import Partitions from "./Partitions";
 
@@ -77,16 +75,16 @@ export default function Home({ clusterName, topicData }) {
           <Configs configs={topicData.configs.config} />
         </TabPanel>
         <TabPanel value={value} index={3}>
-          TODO
+          Coming soon
         </TabPanel>
         <TabPanel value={value} index={4}>
-          TODO
+          Coming soon
         </TabPanel>
         <TabPanel value={value} index={5}>
           <Messages clusterId={topicData.clusterId} topic={topicData.name} />
         </TabPanel>
         <TabPanel value={value} index={6}>
-          <p>TODO</p>
+          <p>Coming soon</p>
           <ul>
             <li>Mutations</li>
             <li>Consumer Groups</li>

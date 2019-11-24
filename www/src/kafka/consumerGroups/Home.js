@@ -29,9 +29,8 @@ export default function Home({ match: { params: {clusterId} }} ) {
   const [data, setData] = useState(graphql.initialData());
   const [errorMessage, setErrorMessage] = useState(null);
   useEffect(() => { graphql.refresh() }, []); // TODO warning!?
-
   const results = data.results ? data.results : { clusters: [] };
-  const cluster = results.clusters.length ? results.clusters[0] : {consumerGroupListings: []};
+  const cluster = results.clusters && results.clusters.length ? results.clusters[0] : {consumerGroupListings: []};
   const consumerGroupListings = cluster.consumerGroupListings;
 
   return (

@@ -9,9 +9,10 @@ export default function Home({
     params: { clusterId, topic }
   }
 }) {
-  const { loading, error, data } = useQuery(TOPIC_QUERY, {
+  const { loading, error, data } = useQuery(topicQuery, {
     variables: { clusterId, topic }
   });
+
   const getMetaData = () => {
     if (
       !loading &&
@@ -38,7 +39,7 @@ export default function Home({
   );
 }
 
-const TOPIC_QUERY = gql`
+const topicQuery = gql`
   query($clusterId: ID!, $topic: String!) {
     clusters(clusterId: $clusterId) {
       name
