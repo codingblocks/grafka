@@ -171,6 +171,7 @@ subscription subscriptionNameHere {
   messages(
     clusterId: "paste.your.clusterId.here"
     topic: "paste.your.topic.name.here"
+    valueDeserializer: "org.apache.kafka.common.serialization.StringDeserializer"
     latchSize: 200
     latchTimeoutMs: 200
   ) {
@@ -184,3 +185,5 @@ subscription subscriptionNameHere {
   }
 }
 ```
+
+Note: if you're working in a graphical tool, the subscription url is `ws:localhost:9000/subscriptions`

@@ -18,18 +18,29 @@ class KafkaMessagePublisher(private val kafkaClusterQueryResolver: KafkaClusterQ
 
     private val log = LoggerFactory.getLogger(javaClass)
 
-    fun getPublisher(clusterId: String, topic: String) = getPublisher(
+    fun getPublisher(clusterId: String, topic: String, startingOffset: Long, keyDeserializer: String?, valueDeserializer: String?) = getPublisher(
             kafkaClusterQueryResolver.clusters(clusterId).first(),
-            topic
+            topic,
+            startingOffset,
+            keyDeserializer,
+            valueDeserializer
     )
 
-    fun getPublisher(cluster: KafkaCluster, topic: String): Flux<KafkaMessage> {
+    fun getPublisher(cluster: KafkaCluster, topic: String, startingOffset: Long, keyDeserializer: String?, valueDeserializer: String?): Flux<KafkaMessage> {
         log.info("Getting publisher for ${cluster.clusterId}:${topic}")
 
         val config = getConfigurationFromCluster(cluster)
+        if(keyDeserializer != null) {
+            log.info("Overriding default key deserializer to ${keyDeserializer}")
+            config["key.deserializer"] = keyDeserializer
+        }
+        if(valueDeserializer != null) {
+            log.info("Overriding default value deserializer to ${valueDeserializer}")
+            config["value.deserializer"] = valueDeserializer
+        }
 
         val options = ReceiverOptions.create<String, GenericRecord>(config)
-                .addAssignListener { partitions -> partitions.forEach { p -> p.seekToBeginning() } }
+                .addAssignListener { partitions -> partitions.forEach { p -> p.seek(startingOffset) } }
                 .subscription(Collections.singleton(topic))
 
         return KafkaReceiver
