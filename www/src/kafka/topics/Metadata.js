@@ -12,6 +12,7 @@ import Configs from "./Configs";
 import Divider from "@material-ui/core/Divider";
 import Grid from "../clusters/Grid";
 import BasicDetails from "./BasicDetails";
+import Partitions from "./Partitions";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -43,15 +44,10 @@ export default function Home({ clusterName, topicData }) {
     setValue(newValue);
   };
 
-  const partitions = topicData.description.partitions
-    .map(p => {
-      return {
-        partition: p.partition,
-        display: `P${p.partition} Leader: ${p.leader.id} ${p.leader.host}:${p.leader.port} Rack: ${p.leader.rack} Replicas: ${p.replicas.length} ISR: ${p.isr.length}`
-      };
-    })
-    .sort(p => p.partition)
-    .map(p => <ul key={p.partition}>{p.display}</ul>);
+  const partitions = topicData.description.partitions.sort((a,b) => a.partition > b.partition ? 1 : -1);
+  topicData.offsets.partitionOffsets.forEach(p => {
+    Object.assign(partitions[p.partition], p);
+  });
 
   return (
     <Card>
@@ -67,7 +63,7 @@ export default function Home({ clusterName, topicData }) {
           <Tab label="Consumer Groups" {...a11yProps(3)} />
           <Tab label="Schema" {...a11yProps(4)} />
           <Tab label="Messages" {...a11yProps(5)} />
-          <Tab label="Schema" {...a11yProps(6)} />
+          <Tab label="Coming soon" {...a11yProps(6)} />
         </Tabs>
       </AppBar>
       <Box>
@@ -75,7 +71,7 @@ export default function Home({ clusterName, topicData }) {
           <BasicDetails clusterName={clusterName} topicData={topicData} />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          {partitions}
+          <Partitions partitions={partitions}/>
         </TabPanel>
         <TabPanel value={value} index={2}>
           <Configs configs={topicData.configs.config} />

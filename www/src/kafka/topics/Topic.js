@@ -109,6 +109,12 @@ const TOPIC_QUERY = gql`
           lifetimeOffsetCount
           minOffset
           maxOffset
+          partitionOffsets {
+            partition
+            beginningOffset
+            endOffset
+            offsetCount
+          }
         }
       }
     }

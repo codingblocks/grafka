@@ -36,10 +36,11 @@ class KafkaAdminResolver(private val kafkaClientFactory: KafkaClientFactory, pri
 
             consumer.seekToBeginning(partitions)
             val offsets = partitions.map { p ->
-                val beginning = consumer.position(p);
-                consumer.seekToEnd(listOf(p));
-                val end = consumer.position(p);
-                KafkaPartitionOffsets(p.partition(), beginning, end);
+                consumer.seekToBeginning(listOf(p))
+                val beginning = consumer.position(p)
+                consumer.seekToEnd(listOf(p))
+                val end = consumer.position(p)
+                KafkaPartitionOffsets(p.partition(), beginning, end)
             }
             return KafkaTopicOffsets(offsets)
         } finally {
