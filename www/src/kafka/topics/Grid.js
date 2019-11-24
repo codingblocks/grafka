@@ -21,13 +21,16 @@ export default function Grid({ results }) {
     if(r.configs && r.configs.config) {
       r.configs.config.forEach(c => r[c.name] = c.value);
     }
-    r.partitionCount = r.description.partitions.length;
+
+    r.partitionCount = r.offsets.partitionCount;
+    r.offsetCount = r.offsets.offsetCount;
+    r.lifetimeOffsetCount = r.offsets.lifetimeOffsetCount;
   });
   return (
     <React.Fragment>
       <MaterialTable
         icons={tableIcons}
-        title="Topics"
+        title="Configs"
         components={{
           Container: props => (
             <Paper
@@ -50,11 +53,19 @@ export default function Grid({ results }) {
             field: "partitionCount"
           },
           {
+            title: "Current Offsets",
+            field: "offsetCount"
+          },
+          {
+            title: "Lifetime Offsets",
+            field: "lifetimeOffsetCount"
+          },
+          {
             title: "Cleanup Policy",
             field: "cleanup.policy"
           },
           {
-            title: "Min In Sync Replicas",
+            title: "Replicas",
             field: "min.insync.replicas"
           },
           {

@@ -6,5 +6,6 @@ class KafkaTopicListing(val clusterId: String, val name: String, val internal: B
     val description by lazy { resolver.clusterDescription(clusterId, name) }
     val configs by lazy { resolver.clusterConfigs(clusterId, name) }
     val schema by lazy { resolver.clusterSchema(clusterId, name) }
+    val offsets by lazy { resolver.topicPartitionMetadata(clusterId, name) }
     fun consumerGroups(partialConsumerGroupId: String? = null) = resolver.clusterConsumerGroups(clusterId, name, partialConsumerGroupId)
 }

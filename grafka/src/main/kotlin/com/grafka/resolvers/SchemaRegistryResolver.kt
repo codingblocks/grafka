@@ -1,15 +1,15 @@
 package com.grafka.resolvers
 
 import KafkaSchemaRegistrySubject
-import com.grafka.configs.SchemaRegistryClientFactory
 import com.grafka.entities.KafkaSchemaRegistry
 import com.grafka.entities.KafkaSchemaRegistrySubjectMetadata
 import com.coxautodev.graphql.tools.GraphQLQueryResolver
+import com.grafka.configs.KafkaClientFactory
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient
 import org.springframework.stereotype.Component
 
 @Component
-class SchemaRegistryResolver(private val clientFactory: SchemaRegistryClientFactory) : GraphQLQueryResolver {
+class SchemaRegistryResolver(private val clientFactory: KafkaClientFactory) : GraphQLQueryResolver {
     private val clients = hashMapOf<String, SchemaRegistryClient>()
     private fun getClient(clusterId: String) = clients.getOrPut(clusterId, { clientFactory.getSchemaRegistryClient(clusterId) })
 

@@ -21,6 +21,11 @@ export default function Home({ match: { params: {clusterId} }} ) {
               value
             }
           }
+          offsets {
+            partitionCount
+            offsetCount
+            lifetimeOffsetCount
+          }
           description {
             partitions {
               partition

@@ -1,19 +1,54 @@
 package com.grafka.resolvers
 
-import com.grafka.configs.AdminClientFactory
+import com.grafka.configs.KafkaClientFactory
 import com.grafka.entities.*
 import com.coxautodev.graphql.tools.GraphQLQueryResolver
+import com.grafka.entities.topics.KafkaPartitionOffsets
 import com.grafka.entities.topics.KafkaTopicDescription
 import com.grafka.entities.topics.KafkaTopicListing
+import com.grafka.entities.topics.KafkaTopicOffsets
 import org.apache.kafka.clients.admin.*
+import org.apache.kafka.common.TopicPartition
 import org.apache.kafka.common.config.ConfigResource
 import org.springframework.stereotype.Component
+import java.time.Instant
 
+// This is a very humble object...
 @Component
-class KafkaAdminResolver(private val adminClientFactory: AdminClientFactory, private val schemaRegistryResolver: SchemaRegistryResolver) : GraphQLQueryResolver {
+class KafkaAdminResolver(private val kafkaClientFactory: KafkaClientFactory, private val schemaRegistryResolver: SchemaRegistryResolver) : GraphQLQueryResolver {
 
     private val adminClients = hashMapOf<String, AdminClient>()
-    private fun getAdminClient(clusterId: String) = adminClients.getOrPut(clusterId, { adminClientFactory.getAdminClient(clusterId) })
+    private fun getAdminClient(clusterId: String) = adminClients.getOrPut(clusterId, { kafkaClientFactory.getAdminClient(clusterId) })
+
+    fun topicPartitionMetadata(clusterId: String, topicName: String): KafkaTopicOffsets {
+        val groupId = "_grafka-temp-consumer-${Instant.now().toEpochMilli()}"
+        val consumer = kafkaClientFactory.getConsumer(clusterId, groupId)
+
+        try {
+            consumer.subscribe(listOf(topicName))
+
+            val topics = consumer.listTopics()
+            consumer.unsubscribe() // can't assign unless you unsub
+
+            val partitions = topics[topicName]!!.map { t -> TopicPartition(t.topic(), t.partition()) }
+
+            consumer.assign(partitions) // can't seek unless your assigned
+
+            consumer.seekToBeginning(partitions)
+            val offsets = partitions.map { p ->
+                consumer.seekToBeginning(listOf(p))
+                val beginning = consumer.position(p)
+                consumer.seekToEnd(listOf(p))
+                val end = consumer.position(p)
+                KafkaPartitionOffsets(p.partition(), beginning, end)
+            }
+            return KafkaTopicOffsets(offsets)
+        } finally {
+            consumer.unsubscribe()
+            consumer.close()
+            getAdminClient(clusterId).deleteConsumerGroups(listOf(groupId))
+        }
+    }
 
     fun topicListings(clusterId: String, partialTopicName: String? = null) = getAdminClient(clusterId)
             .listTopics(ListTopicsOptions().apply {
