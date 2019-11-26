@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  AppBar,
-  Box,
-  Card,
-  Tab,
-  Tabs,
-  Typography
-} from "@material-ui/core";
+import { AppBar, Box, Card, Tab, Tabs, Typography } from "@material-ui/core";
 import Messages from "./Messages";
 import Configs from "./Configs";
 import BasicDetails from "./BasicDetails";
@@ -36,13 +29,24 @@ function a11yProps(index) {
   };
 }
 
-export default function Home({ clusterName, topicData }) {
-  const [value, setValue] = React.useState(0);
+export default function Home({ clusterName, topicData, selectedTab }) {
+  const tabs = "details,partitions,configs,consumer-groups,schema,messages,coming-soon"
+    .split(",")
+    .reduce((hash, tab, index) => {
+      hash[tab] = index;
+      return hash;
+    }, {});
+
+  const initialValue = selectedTab && tabs[selectedTab] ? tabs[selectedTab] : 0;
+  const [value, setValue] = React.useState(initialValue);
   const handleChange = (event, newValue) => {
+    // TODO Update browser history to change the url?
     setValue(newValue);
   };
 
-  const partitions = topicData.description.partitions.sort((a,b) => a.partition > b.partition ? 1 : -1);
+  const partitions = topicData.description.partitions.sort((a, b) =>
+    a.partition > b.partition ? 1 : -1
+  );
   topicData.offsets.partitionOffsets.forEach(p => {
     Object.assign(partitions[p.partition], p);
   });
@@ -69,7 +73,7 @@ export default function Home({ clusterName, topicData }) {
           <BasicDetails clusterName={clusterName} topicData={topicData} />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <Partitions partitions={partitions}/>
+          <Partitions partitions={partitions} />
         </TabPanel>
         <TabPanel value={value} index={2}>
           <Configs configs={topicData.configs.config} />
@@ -81,7 +85,11 @@ export default function Home({ clusterName, topicData }) {
           Coming soon
         </TabPanel>
         <TabPanel value={value} index={5}>
-          <Messages clusterId={topicData.clusterId} topic={topicData.name} />
+          <Messages
+            clusterId={topicData.clusterId}
+            topic={topicData.name}
+            schema={topicData.schema}
+          />
         </TabPanel>
         <TabPanel value={value} index={6}>
           <p>Coming soon</p>

@@ -6,23 +6,40 @@ import Metadata from "./Metadata";
 
 export default function Home({
   match: {
-    params: { clusterId, topic }
+    params: { clusterId, topic, selectedTab }
   }
 }) {
   const { loading, error, data } = useQuery(topicQuery, {
     variables: { clusterId, topic }
   });
 
+  const storageKey = `topic-details-${clusterId}-${topic}`;
+  let displayData = data;
+  let hasResults = false;
+  if(!loading && !error) {
+    hasResults = true;
+    window.localStorage.setItem(storageKey, JSON.stringify(displayData)); // TODO make consistent with other caching
+  } else if(loading && !error) {
+    try {
+      displayData = JSON.parse(window.localStorage.getItem(storageKey)); // TODO make consistent with other caching
+      hasResults = true;
+    } catch(e) {
+      console.log(`Unable to parse local storage, giving up`);
+      window.localStorage.removeItem(storageKey);
+    }
+  }
+
   const getMetaData = () => {
-    if (
-      !loading &&
+    // TODO Gross!
+    const displayMetadata = hasResults &&
       !error &&
-      data.clusters.length === 1 &&
-      data.clusters[0].topicListings.length === 1
-    ) {
-      const clusterName = data.clusters[0].name;
-      const topicData = data.clusters[0].topicListings[0];
-      return <Metadata clusterName={clusterName} topicData={topicData} />;
+      displayData.clusters.length === 1 &&
+      displayData.clusters[0].topicListings.length === 1;
+
+    if (displayMetadata) {
+      const clusterName = displayData.clusters[0].name;
+      const topicData = displayData.clusters[0].topicListings[0];
+      return <Metadata clusterName={clusterName} topicData={topicData} selectedTab={selectedTab}/>;
     }
     return <span>Loading metadata</span>;
   };
@@ -56,6 +73,15 @@ const topicQuery = gql`
             metadata
             offset
           }
+        }
+        schema {
+          subject
+          metadata {
+            id
+            version
+            id
+          }
+          compatibilityMode
         }
         configs {
           config {
