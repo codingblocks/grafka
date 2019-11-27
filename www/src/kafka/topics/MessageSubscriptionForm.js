@@ -7,6 +7,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const knownDeserializers = "io.confluent.kafka.serializers.KafkaAvroDeserializer,org.apache.kafka.common.serialization.ByteArrayDeserializer,org.apache.kafka.common.serialization.ByteBufferDeserializer,org.apache.kafka.common.serialization.BytesDeserializer,org.apache.kafka.common.serialization.DoubleDeserializer,org.apache.kafka.common.serialization.FloatDeserializer,org.apache.kafka.common.serialization.IntegerDeserializer,org.apache.kafka.common.serialization.LongDeserializer,org.apache.kafka.common.serialization.SessionWindowedDeserializer,org.apache.kafka.common.serialization.ShortDeserializer,org.apache.kafka.common.serialization.StringDeserializer,org.apache.kafka.common.serialization.TimeWindowedDeserializer,org.apache.kafka.common.serialization.UUIDDeserializer".split(",");
+
 export default ({ topic, hasSchema }) => {
   const classes = useStyles();
   const handleChange = prop => event => {
@@ -37,12 +39,7 @@ export default ({ topic, hasSchema }) => {
           helperText="Key format"
           fullWidth={true}
         >
-          <MenuItem value="org.apache.kafka.common.serialization.StringDeserializer">
-            StringDeserializer
-          </MenuItem>
-          <MenuItem value="org.apache.kafka.common.serialization.IntDeserializer">
-            IntDeserializer
-          </MenuItem>
+          {knownDeserializers.map(d => <MenuItem value="org.apache.kafka.common.serialization.StringDeserializer">{d.split(".").slice(-1)}</MenuItem>)}
         </TextField>
 
         <TextField
@@ -55,18 +52,7 @@ export default ({ topic, hasSchema }) => {
           helperText="Value format"
           fullWidth={true}
         >
-          <MenuItem
-            value="io.confluent.kafka.serializers.KafkaAvroDeserializer"
-            disabled={!hasSchema}
-          >
-            KafkaAvroDeserializer
-          </MenuItem>
-          <MenuItem value="org.apache.kafka.common.serialization.StringDeserializer">
-            StringDeserializer
-          </MenuItem>
-          <MenuItem value="org.apache.kafka.common.serialization.IntDeserializer">
-            IntDeserializer
-          </MenuItem>
+          {knownDeserializers.map(d => <MenuItem value="org.apache.kafka.common.serialization.StringDeserializer">{d.split(".").slice(-1)}</MenuItem>)}
         </TextField>
 
         <TextField

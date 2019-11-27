@@ -7,6 +7,7 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import org.apache.kafka.clients.admin.AdminClient
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.StringDeserializer
+import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.stereotype.Service
 import java.io.StringReader
@@ -14,6 +15,7 @@ import java.util.*
 
 @Service
 class KafkaClientFactory(private val clusterRepository: KafkaClusterConfigRepository) {
+    private val log = LoggerFactory.getLogger(javaClass)
     fun getAdminClient(clusterId: String): AdminClient {
         val p = getProperties(clusterId)
         return AdminClient.create(p)
@@ -30,7 +32,7 @@ class KafkaClientFactory(private val clusterRepository: KafkaClusterConfigReposi
         return KafkaConsumer(p, keyDeserializer, valueDeserializer)
     }
 
-    fun getSchemaRegistryClient(clusterId: String): SchemaRegistryClient {
+    fun getSchemaRegistryClient(clusterId: String): SchemaRegistryClient? {
         val cluster = clusterRepository.findById(UUID.fromString(clusterId))
         val p = Properties()
         p.load(StringReader(cluster.get().config))
@@ -38,6 +40,12 @@ class KafkaClientFactory(private val clusterRepository: KafkaClusterConfigReposi
         val map = p
                 .map { it.key.toString() to it.value }
                 .toMap()
+
+        if(!map.containsKey("schema.registry.url")) {
+            log.warn("No schema.registry.url found, skipping")
+            return null
+        }
+
         val mapCapacity = 1024 // TODO what is this!?
         return CachedSchemaRegistryClient(
                 map["schema.registry.url"].toString(), mapCapacity, map

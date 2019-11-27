@@ -104,7 +104,7 @@ type KafkaNode {
 type KafkaMessage {
     topic: String!
     key: String
-    value: String!
+    value: String
     partition: Int!
     offset: Long!
     timestampType: String

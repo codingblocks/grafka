@@ -1,8 +1,8 @@
 import React from "react";
 import gql from "graphql-tag";
 import {
+  Box,
   Card,
-  Grid,
   LinearProgress
 } from "@material-ui/core";
 import { useSubscription } from "@apollo/react-hooks";
@@ -16,12 +16,14 @@ export const subscription = gql`
     $topic: String!
     $latchSize: Int!
     $latchTimeoutMs: Int!
+    $valueDeserializer: String!
   ) {
     messages(
       clusterId: $clusterId
       topic: $topic
       latchSize: $latchSize
       latchTimeoutMs: $latchTimeoutMs
+      valueDeserializer: $valueDeserializer
     ) {
       key
       value
@@ -39,9 +41,10 @@ export const subscription = gql`
 // TODO export? export to...?
 
 export default withApollo(({ clusterId, topic, schema }) => {
-  // TODO hard-coded
+  // TODO should get values from form
+  const valueDeserializer = schema ? "io.confluent.kafka.serializers.KafkaAvroDeserializer" : "org.apache.kafka.common.serialization.StringDeserializer";
   const sub = useSubscription(subscription, {
-    variables: { clusterId, topic, latchSize: 100, latchTimeoutMs: 100 },
+    variables: { clusterId, topic, latchSize: 100, latchTimeoutMs: 100, valueDeserializer },
     shouldResubscribe: true,
     onSubscriptionData: () => {
       console.log(`onSubscriptionData`);
@@ -54,14 +57,13 @@ export default withApollo(({ clusterId, topic, schema }) => {
   // how the heck can you unsubscribe?
 
   return (
-    <React.Fragment>
-
-      <Grid container spacing={2}>
+    <div style={{flexGrow: 1}}>
+      <Box display="flex">
         {/* this should be a drawer? */}
-        <Grid item xs={2} style={{minWidth: 240}}>
+        <Box style={{width: 240}}>
           <MessageSubscriptionForm topicName={topic} hasSchema={!!schema}/>
-        </Grid>
-        <Grid item >
+        </Box>
+        <Box flexGrow={1} ml={4}>
           <p hidden={!sub.loading}>
             Waiting for messages (this can take a while to start up)
           </p>
@@ -82,8 +84,8 @@ export default withApollo(({ clusterId, topic, schema }) => {
                 <Message key={`${m.partition}-${m.offset}`} message={m} />
               ))}
           </div>
-        </Grid>
-      </Grid>
-    </React.Fragment>
+        </Box>
+      </Box>
+    </div>
   );
 });

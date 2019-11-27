@@ -8,7 +8,8 @@ import Grid from "@material-ui/core/Grid";
 const useStyles = makeStyles({
   message: {
     padding: "20px",
-    margin: "10px"
+    margin: "10px",
+    width: "100%"
   },
   meta: {
     fontSize: "smaller",

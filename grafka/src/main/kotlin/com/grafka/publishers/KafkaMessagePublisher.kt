@@ -30,18 +30,20 @@ class KafkaMessagePublisher(private val kafkaClusterQueryResolver: KafkaClusterQ
         log.info("Getting publisher for ${cluster.clusterId}:${topic}")
 
         val config = getConfigurationFromCluster(cluster)
-        if(keyDeserializer != null) {
+        if (keyDeserializer != null) {
             log.info("Overriding default key deserializer to ${keyDeserializer}")
             config["key.deserializer"] = keyDeserializer
         }
-        if(valueDeserializer != null) {
+        if (valueDeserializer != null) {
             log.info("Overriding default value deserializer to ${valueDeserializer}")
             config["value.deserializer"] = valueDeserializer
         }
 
-        val options = ReceiverOptions.create<String, GenericRecord>(config)
-                .addAssignListener { partitions -> partitions.forEach { p -> p.seek(startingOffset) } }
-                .subscription(Collections.singleton(topic))
+        val options = if (valueDeserializer.isNullOrEmpty() || valueDeserializer.contains("StringDeserializer")) {
+            getReceiverOptions<String, String>(config, topic, startingOffset)
+        } else {
+            getReceiverOptions<String, GenericRecord>(config, topic, startingOffset)
+        }
 
         return KafkaReceiver
                 .create(options)
@@ -51,7 +53,7 @@ class KafkaMessagePublisher(private val kafkaClusterQueryResolver: KafkaClusterQ
                     KafkaMessage(
                             it.topic(),
                             it.key(),
-                            it.value().toString(),
+                            it.value()?.toString(),
                             it.partition(),
                             it.offset(),
                             it.timestampType().toString(),
@@ -60,6 +62,11 @@ class KafkaMessagePublisher(private val kafkaClusterQueryResolver: KafkaClusterQ
                     )
                 }
     }
+
+    private fun <K, V> getReceiverOptions(config: Properties, topic: String, startingOffset: Long) = ReceiverOptions.create<K, V>(config)
+            .addAssignListener { partitions -> partitions.forEach { p -> p.seek(startingOffset) } }
+            .subscription(Collections.singleton(topic))
+
 
     private fun getConfigurationFromCluster(cluster: KafkaCluster): Properties {
         val properties = Properties().apply {

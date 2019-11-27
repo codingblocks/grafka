@@ -16,13 +16,16 @@ export default function Home({
   const storageKey = `topic-details-${clusterId}-${topic}`;
   let displayData = data;
   let hasResults = false;
-  if(!loading && !error) {
+  if(!loading && !error && displayData) {
     hasResults = true;
     window.localStorage.setItem(storageKey, JSON.stringify(displayData)); // TODO make consistent with other caching
   } else if(loading && !error) {
     try {
-      displayData = JSON.parse(window.localStorage.getItem(storageKey)); // TODO make consistent with other caching
-      hasResults = true;
+      const cachedData = window.localStorage.getItem(storageKey);
+      if(cachedData) {
+        displayData = JSON.parse(cachedData); // TODO make consistent with other caching
+        hasResults = true;
+      }
     } catch(e) {
       console.log(`Unable to parse local storage, giving up`);
       window.localStorage.removeItem(storageKey);
@@ -31,7 +34,8 @@ export default function Home({
 
   const getMetaData = () => {
     // TODO Gross!
-    const displayMetadata = hasResults &&
+    const displayMetadata =
+      hasResults &&
       !error &&
       displayData.clusters.length === 1 &&
       displayData.clusters[0].topicListings.length === 1;
