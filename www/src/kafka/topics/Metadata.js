@@ -1,6 +1,6 @@
 import React from "react";
 import { AppBar, Box, Card, Tab, Tabs, Typography } from "@material-ui/core";
-import Messages from "./Messages";
+import Messages from "./messages/Messages";
 import Configs from "./Configs";
 import BasicDetails from "./BasicDetails";
 import Partitions from "./Partitions";

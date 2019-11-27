@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { makeStyles, MenuItem, TextField } from "@material-ui/core";
+import React, {useState} from "react";
+import { makeStyles, Button, MenuItem, TextField } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   paddedInput: {
@@ -9,21 +9,17 @@ const useStyles = makeStyles(theme => ({
 
 const knownDeserializers = "io.confluent.kafka.serializers.KafkaAvroDeserializer,org.apache.kafka.common.serialization.ByteArrayDeserializer,org.apache.kafka.common.serialization.ByteBufferDeserializer,org.apache.kafka.common.serialization.BytesDeserializer,org.apache.kafka.common.serialization.DoubleDeserializer,org.apache.kafka.common.serialization.FloatDeserializer,org.apache.kafka.common.serialization.IntegerDeserializer,org.apache.kafka.common.serialization.LongDeserializer,org.apache.kafka.common.serialization.SessionWindowedDeserializer,org.apache.kafka.common.serialization.ShortDeserializer,org.apache.kafka.common.serialization.StringDeserializer,org.apache.kafka.common.serialization.TimeWindowedDeserializer,org.apache.kafka.common.serialization.UUIDDeserializer".split(",");
 
-export default ({ topic, hasSchema }) => {
+export default function MessageSubscriptionForm ({ subscriptionSettings, onChange }) {
   const classes = useStyles();
-  const handleChange = prop => event => {
-    setValues({ ...values, [prop]: event.target.value });
+  const [values, setValues] = useState(subscriptionSettings);
+  console.log(values);
+  const handleChange = prop => event =>{
+      setValues({ ...values, [prop]: event.target.value });
   };
 
-  const [values, setValues] = useState({
-    latchSize: 100,
-    latchTimeoutMs: 100,
-    keyDeserializer: "org.apache.kafka.common.serialization.StringDeserializer",
-    valueDeserializer: hasSchema
-      ? "io.confluent.kafka.serializers.KafkaAvroDeserializer"
-      : "org.apache.kafka.common.serialization.StringDeserializer",
-    maxDisplayCount: 20
-  });
+  const onSave = () => {
+    onChange && onChange(values);
+  };
 
   // how the heck can you unsubscribe?
   // control latch size / timeout
@@ -34,12 +30,13 @@ export default ({ topic, hasSchema }) => {
           label="Key Deserializer"
           id="keyDeserializer"
           value={values.keyDeserializer}
+          onChange={handleChange("keyDeserializer")}
           className={classes.paddedInput}
           select
           helperText="Key format"
-          fullWidth={true}
+          fullWidth
         >
-          {knownDeserializers.map(d => <MenuItem value="org.apache.kafka.common.serialization.StringDeserializer">{d.split(".").slice(-1)}</MenuItem>)}
+          {knownDeserializers.map(d => <MenuItem key={d} value={d}>{d.split(".").slice(-1)}</MenuItem>)}
         </TextField>
 
         <TextField
@@ -50,9 +47,9 @@ export default ({ topic, hasSchema }) => {
           className={classes.paddedInput}
           select
           helperText="Value format"
-          fullWidth={true}
+          fullWidth
         >
-          {knownDeserializers.map(d => <MenuItem value="org.apache.kafka.common.serialization.StringDeserializer">{d.split(".").slice(-1)}</MenuItem>)}
+          {knownDeserializers.map(d => <MenuItem key={d} value={d}>{d.split(".").slice(-1)}</MenuItem>)}
         </TextField>
 
         <TextField
@@ -62,7 +59,7 @@ export default ({ topic, hasSchema }) => {
           label="Latch Size"
           className={classes.paddedInput}
           helperText="# of messages to wait for before returning"
-          fullWidth={true}
+          fullWidth
         />
 
         <TextField
@@ -72,17 +69,17 @@ export default ({ topic, hasSchema }) => {
           label="Latch Timeout Ms"
           className={classes.paddedInput}
           helperText="How long to wait before returning messages"
-          fullWidth={true}
+          fullWidth
         />
 
         <TextField
           id="startingOffset"
           onChange={handleChange("startingOffset")}
-          value={values.latchTimeoutMs}
+          value={values.startingOffset}
           label="Starting Offset"
           className={classes.paddedInput}
           helperText="leave blank to start at max offset"
-          fullWidth={true}
+          fullWidth
         />
 
         <TextField
@@ -92,8 +89,10 @@ export default ({ topic, hasSchema }) => {
           label="Display Count"
           className={classes.paddedInput}
           helperText="# of messages to show in UI"
-          fullWidth={true}
+          fullWidth
         />
+
+        <Button onClick={() => onChange && onChange(values)} color={"primary"} variant="contained">Update</Button>
       </form>
     </React.Fragment>
   );
