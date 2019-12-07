@@ -9,18 +9,16 @@ export default ({ partitions }) => {
   return (
     <React.Fragment>
       <Card>
-        <Container>
-          <h2>Partitions</h2>
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <p>Partitions: {partitions.length}</p>
-            </Grid>
-            <Grid item xs={6}>
-              <p>Current Messages: {currentMessages}</p>
-              <p>Lifetime Messages: {lifetimeMessages}</p>
-            </Grid>
+        <h2>Partitions</h2>
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <p>Partitions: {partitions.length}</p>
           </Grid>
-        </Container>
+          <Grid item xs={6}>
+            <p>Current Messages: {currentMessages}</p>
+            <p>Lifetime Messages: {lifetimeMessages}</p>
+          </Grid>
+        </Grid>
         <Divider />
         <MaterialTable
           data={partitions.sort((a, b) => (a.partition > b.partition ? 1 : -1))}
@@ -40,7 +38,10 @@ export default ({ partitions }) => {
             },
             {
               title: "Partition Offsets",
-              render: v => v.beginningOffset === v.endOffset ? v.endOffset : `${v.beginningOffset}-${v.endOffset}`
+              render: v =>
+                v.beginningOffset === v.endOffset
+                  ? v.endOffset
+                  : `${v.beginningOffset}-${v.endOffset}`
             },
             {
               title: "Leader",
