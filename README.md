@@ -88,7 +88,7 @@ cd grafka
 gradle build
 ```
 
-Running docker-compose up will start up a test Kafka environment for you as well. Here is a sample configuration that will work with it:
+Running docker-compose up will start up a test Kafka environment for you as well. Here is a sample configuration that will work with it. Warning: This config only works if you are running the java app in something like your IDE. If you are running the graphql endpoing in docker, then you will need to change the bootstrap.servers to kafka1:9092
 
 ```properties
 application.id=grafka
@@ -135,3 +135,7 @@ A: Make sure that everything is stopped before re-running!
 Q: Web app stuck in a bad spot?
 
 A: Try running this: `localStorage.clear()`
+
+Q: Unable to connect to bootstrap servers?
+
+A: Are you running the graphql endpoint in docker? Then the bootstrap.servers should be kafka1:9092
