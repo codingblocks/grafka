@@ -31,7 +31,7 @@ type Mutation {
 }
 
 type Subscription {
-    messages(clusterId: ID!, topic:String!, latchSize:Int!, latchTimeoutMs:Int!): [KafkaMessage!]!
+    messages(clusterId: ID!, topic:String!, keyDeserializer: String, valueDeserializer: String, latchSize:Int, latchTimeoutMs:Int, startingOffset:Long): [KafkaMessage!]!
 }
 
 type KafkaCluster {
@@ -104,7 +104,7 @@ type KafkaNode {
 type KafkaMessage {
     topic: String!
     key: String
-    value: String!
+    value: String
     partition: Int!
     offset: Long!
     timestampType: String

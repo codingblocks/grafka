@@ -64,7 +64,7 @@ export default function Grid({ results, dataChangeHandler }) {
             render: v => {
               return v.description && v.description.controller
                 ? `${v.description.controller.host}:${v.description.controller.port}`
-                : "n/a"
+                : "Error!"
             },
             editComponent: _ => null
           },
@@ -84,7 +84,7 @@ export default function Grid({ results, dataChangeHandler }) {
             title: "Nodes",
             field: "config",
             render: v => {
-              return v.description.nodes.length
+              return v.description ? v.description.nodes.length : "Error!"
             },
             editComponent: _ => null
           },

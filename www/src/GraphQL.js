@@ -1,5 +1,6 @@
 import Settings from "./settings/Settings";
 
+const graphqlUrl = Settings.graphqlUrl;
 const headers = {
   "Content-Type": "application/json",
   Accept: "application/json",
@@ -19,14 +20,16 @@ export default function({ key, query, variables, setData, success, failure }) {
       }
     },
     refresh: () => {
-      const currentData = JSON.parse(window.localStorage.getItem(key)) || defaultData;
+      const currentData =
+        JSON.parse(window.localStorage.getItem(key)) || defaultData;
       currentData.date =
         currentData && currentData.date
           ? new Date(currentData.date).toLocaleString()
           : "";
+
       currentData.loading = true;
       setData(currentData);
-      fetch(Settings.graphqlUrl, {
+      fetch(graphqlUrl, {
         method: "POST",
         headers: headers,
         body: JSON.stringify({ query, variables })
@@ -51,7 +54,7 @@ export default function({ key, query, variables, setData, success, failure }) {
         });
     },
     mutate: () => {
-      fetch(Settings.graphqlUrl, {
+      fetch(graphqlUrl, {
         method: "POST",
         headers: headers,
         body: JSON.stringify({ query, variables })

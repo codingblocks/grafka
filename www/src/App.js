@@ -68,6 +68,7 @@ function App() {
                 </Route>
                 <Route path="/kafka/:clusterId/consumer-groups" component={KafkaConsumerGroups} />
                 <Route path="/kafka/:clusterId/topics" component={KafkaTopics} />
+                <Route path="/kafka/:clusterId/:topic/:selectedTab" component={KafkaTopic} />
                 <Route path="/kafka/:clusterId/:topic" component={KafkaTopic} />
                 <Route path="/preferences">
                   <Preferences

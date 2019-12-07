@@ -2,13 +2,14 @@ import React from "react";
 import {Card, makeStyles, Typography} from "@material-ui/core";
 import {AccessTime, VpnKey} from "@material-ui/icons";
 import ReactMarkdown from "react-markdown";
-import CodeBlock from "../../settings/CodeBlock";
+import CodeBlock from "../../../settings/CodeBlock";
 import Grid from "@material-ui/core/Grid";
 
 const useStyles = makeStyles({
   message: {
     padding: "20px",
-    margin: "10px"
+    margin: "10px",
+    width: "100%"
   },
   meta: {
     fontSize: "smaller",

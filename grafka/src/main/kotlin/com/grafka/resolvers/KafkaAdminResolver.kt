@@ -10,12 +10,16 @@ import com.grafka.entities.topics.KafkaTopicOffsets
 import org.apache.kafka.clients.admin.*
 import org.apache.kafka.common.TopicPartition
 import org.apache.kafka.common.config.ConfigResource
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.Instant
+import java.util.*
 
 // This is a very humble object...
 @Component
 class KafkaAdminResolver(private val kafkaClientFactory: KafkaClientFactory, private val schemaRegistryResolver: SchemaRegistryResolver) : GraphQLQueryResolver {
+
+    private val log = LoggerFactory.getLogger(javaClass)
 
     private val adminClients = hashMapOf<String, AdminClient>()
     private fun getAdminClient(clusterId: String) = adminClients.getOrPut(clusterId, { kafkaClientFactory.getAdminClient(clusterId) })
@@ -50,14 +54,20 @@ class KafkaAdminResolver(private val kafkaClientFactory: KafkaClientFactory, pri
         }
     }
 
-    fun topicListings(clusterId: String, partialTopicName: String? = null) = getAdminClient(clusterId)
-            .listTopics(ListTopicsOptions().apply {
-                listInternal(true)
-            })
-            .listings()
-            .get()
-            .filter { partialTopicName == null || it.name().contains(partialTopicName) }
-            .map { KafkaTopicListing(clusterId, it.name(), it.isInternal, this) }
+    fun topicListings(clusterId: String, partialTopicName: String? = null) = try {
+        getAdminClient(clusterId)
+                .listTopics(ListTopicsOptions().apply {
+                    listInternal(true)
+                })
+                .listings()
+                .get()
+                .filter { partialTopicName == null || it.name().contains(partialTopicName) }
+                .map { KafkaTopicListing(clusterId, it.name(), it.isInternal, this) }
+    } catch(e:Exception) {
+        log.error("Error fetching topic listings, we should really tell the client!")
+        log.error(e.toString())
+        Collections.emptyList<KafkaTopicListing>()
+    }
 
     fun kafkaTopicDescriptions(clusterId: String, topic: String) = KafkaTopicDescription.create(
             getAdminClient(clusterId)
@@ -69,7 +79,7 @@ class KafkaAdminResolver(private val kafkaClientFactory: KafkaClientFactory, pri
                     .get()
     )
 
-    fun consumerGroupListings(clusterId: String, partialConsumerGroupId: String? = null, topicName: String? = null): List<KafkaConsumerGroupListing> {
+    fun consumerGroupListings(clusterId: String, partialConsumerGroupId: String? = null, topicName: String? = null): List<KafkaConsumerGroupListing> = try {
         var groups = getAdminClient(clusterId)
                 .listConsumerGroups()
                 .all()
@@ -86,7 +96,11 @@ class KafkaAdminResolver(private val kafkaClientFactory: KafkaClientFactory, pri
             result = result.filter { it.offsets().any { o -> o.topicName == topicName } }
         }
 
-        return result
+        result
+    } catch(e:Exception) {
+        log.error("Error fetching consumer groups, we should really tell the client!")
+        log.error(e.toString())
+        Collections.emptyList()
     }
 
     fun consumerGroupOffsets(clusterId: String, groupId: String) = getAdminClient(clusterId)
@@ -103,9 +117,15 @@ class KafkaAdminResolver(private val kafkaClientFactory: KafkaClientFactory, pri
                 )
             }
 
-    fun describeCluster(clusterId: String) = KafkaClusterDescription(
-            getAdminClient(clusterId).describeCluster()
-    )
+    fun describeCluster(clusterId: String) = try {
+        KafkaClusterDescription(
+                getAdminClient(clusterId).describeCluster()
+        )
+    } catch(e:Exception) {
+        log.error("Error describing cluster, probably config related. We should really tell the UI about this...")
+        log.error(e.toString())
+        null
+    }
 
     fun topicConfigs(clusterId: String, topicNames: List<String>) = clusterConfigs(
             clusterId,
