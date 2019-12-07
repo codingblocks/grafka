@@ -34,7 +34,9 @@ export default function Home() {
   });
   const [data, setData] = useState(graphql.initialData());
   const [errorMessage, setErrorMessage] = useState(null);
-  useEffect(() => { graphql.refresh() }, []); // TODO warning!?
+  useEffect(() => {
+    graphql.refresh()
+  }, []); // TODO warning!?
 
   const results = (data.results && data.results.clusters) ? data.results.clusters : [];
 
