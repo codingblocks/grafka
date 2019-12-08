@@ -1,14 +1,23 @@
 package com.grafka.resolvers
 
-import com.grafka.entities.KafkaCluster
-import com.grafka.entities.KafkaClusterConfig
-import com.grafka.repositories.KafkaClusterConfigRepository
 import com.coxautodev.graphql.tools.GraphQLMutationResolver
+import com.grafka.entities.KafkaCluster
+import com.grafka.repositories.KafkaClusterConfigRepository
+import com.coxautodev.graphql.tools.GraphQLQueryResolver
+import com.grafka.entities.KafkaClusterConfig
 import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class KafkaClusterMutationResolver(private val repository: KafkaClusterConfigRepository, private val topicRepository: KafkaAdminResolver, private val schemaRegistryResolver: SchemaRegistryResolver) : GraphQLMutationResolver {
+class KafkaClusterResolver(private val repository: KafkaClusterConfigRepository, private val topicRepository: KafkaAdminResolver, private val schemaRegistryResolver: SchemaRegistryResolver) : GraphQLQueryResolver, GraphQLMutationResolver {
+
+    fun clusters(clusterId: String?):List<KafkaCluster> {
+        return (if(clusterId != null)
+            listOf(repository.findById(UUID.fromString(clusterId)).get())
+        else
+            repository.findAll()
+        ).map { KafkaCluster(it, topicRepository, schemaRegistryResolver) }
+    }
 
     fun newCluster(name: String, config: String): KafkaCluster {
         val item = KafkaClusterConfig(UUID.randomUUID(), name, config)
