@@ -1,4 +1,4 @@
-## Sample queries
+## Cluster queries
 
 *Do you have any cluster configs saved?*
 ```graphql
@@ -40,12 +40,50 @@ mutation {
 }
 ```
 
+## Topics
+
 *You can also create topics*
 ```graphql
 mutation {
   newTopicByPartitionAndReplicationFactor(clusterId: "paste.your.clusterId.here", topicName: "test-topic", partitionCount: 1, replicationFactor: 1)
 }
 ```
+
+## Kafka Connect
+
+*Creating a new Connect cluster:*
+```graphql
+mutation {
+  newConnect(name: "Test", config:"url:http://localhost:8083") {
+    connectId
+    name
+    config
+  }
+}
+```
+
+*Adding or connector, this won't actually work, but it's a valid config so it will get saved:*
+```graphql
+mutation {
+  saveConnector(connectId: "e12a0c4e-f0da-41cd-a7d4-d82859580bac", name:"test3", connectorConfig:
+  "{\"name\":\"local-file-source2\",\"config\":{\"connector.class\":\"FileStreamSource\",\"topic\":\"connect-test\",\"file\":\"test.txt\"}}"
+  )
+}
+```
+
+*Querying all connectors*
+
+```graphql
+query {
+  connect {
+    name
+    connectors
+  }
+}
+```
+
+
+## Lots of information!
 
 *Let's take a look at all the information we have now (note: this is slow!)*
 ```graphql
@@ -160,12 +198,18 @@ mutation {
       }
     }
   }
+  connect {
+    connectId
+    name
+    config
+  }
 }
 ```
 
+## Subscriptions
 
-*Testing subscriptions: (pass null to get all results)*
-Note: this isn't working very well...
+*Testing subscriptions: (pass null to get all results, check out formal documentation for all objects)*
+
 ```graphql
 subscription subscriptionNameHere {
   messages(
