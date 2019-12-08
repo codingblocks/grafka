@@ -17,78 +17,61 @@ import java.util.*
 @Service
 class KafkaConnectService(val repository: KafkaConnectConfigRepository) {
 
-    fun getConnectors(connectId:String, name: String? = null): List<KafkaConnector> {
+    fun getConnectors(connectId: String, name: String? = null): List<KafkaConnector> {
         val response = request(connectId, "/connectors")
         val deserialized: List<String> = jacksonObjectMapper().readValue(response)
-        return deserialized.map{KafkaConnector(connectId, it, this)}.filter{name == null || it.name == name}
+        return deserialized.map { KafkaConnector(connectId, it, this) }.filter { name == null || it.name == name }
     }
 
-    fun getConnectorStatus(connectId: String, name:String): KafkaConnectorStatus {
+    fun getConnectorStatus(connectId: String, name: String): KafkaConnectorStatus {
         val response = request(connectId, "/connectors/${name}/status")
         return jacksonObjectMapper().readValue(response)
     }
 
-    fun getConnectorPlugins(connectId:String): List<KafkaConnectPlugin> {
+    fun getConnectorPlugins(connectId: String): List<KafkaConnectPlugin> {
         val response = request(connectId, "/connector-plugins")
         return jacksonObjectMapper().readValue(response)
     }
 
-    fun saveConnector(connectId: String, name:String, connectorConfig:String): String? {
+    fun saveConnector(connectId: String, name: String, connectorConfig: String): String? {
         // TODO should return KafkaConnector object instead of String!
         // if it already exists, then delete it and re-create
         try {
             val result = request(connectId, "/connectors", "POST", connectorConfig)
             //service.initializeTopicWithDefaults(name)
             return result
-        } catch(e:Exception) {
+        } catch (e: Exception) {
             // TODO only 409
-            request(connectId,"/connectors/${name}", "DELETE")
+            request(connectId, "/connectors/${name}", "DELETE")
             Thread.sleep(2000) // TODO setting for Race condition? Better way to wait?
             val result = request(connectId, "/connectors", "POST", connectorConfig)
             //service.initializeTopicWithDefaults(name)
             return result
         }
     }
-//
-//    @Post("/connector/{name}/restart")
-//    fun restartConnector(name:String): String? {
-//        for (s in name.split(",")) {
-//            simpleRequest(connectId, "/connectors/${s}/restart", "POST")
-//        }
-//        return "{}"
-//    }
-//
-//
-//    // PUT
-//
-//    @Put("/connector/{name}/pause")
-//    fun pauseConnector(name:String): String? {
-//        for (s in name.split(",")) {
-//            simpleRequest(connectId, "/connectors/${s}/pause", "PUT")
-//        }
-//        return "{}"
-//    }
-//
-//    @Put("/connector/{name}/resume")
-//    fun resumeConnector(name:String): String? {
-//        for (s in name.split(",")) {
-//            simpleRequest(connectId, "/connectors/${s}/resume", "PUT")
-//        }
-//        return "{}"
-//    }
-//
-//    // Delete
-//
-//    @Delete("/connector/{name}/remove")
-//    fun removeConnector(name:String): String? {
-//        for (s in name.split(",")) {
-//            simpleRequest(connectId, "/connectors/${s}", "DELETE")
-//        }
-//        return "{}"
-//    }
-//
+
+    fun restartConnectors(connectId: String, names: List<String>): Int {
+        names.forEach { request(connectId, "/connectors/${it}/restart", "POST") }
+        return names.count()
+    }
+
+    fun pauseConnectors(connectId: String, names: List<String>): Int {
+        names.forEach { request(connectId, "/connectors/${it}/pause", "PUT") }
+        return names.count()
+    }
+
+    fun resumeConnectors(connectId: String, names: List<String>): Int {
+        names.forEach { request(connectId, "/connectors/${it}/pause", "PUT") }
+        return names.count()
+    }
+
+    fun removeConnectors(connectId: String, names: List<String>): Int {
+        names.forEach { request(connectId, "/connectors/${it}", "DELETE") }
+        return names.count()
+    }
+
     // Helper
-    fun request(connectId: String, path: String, method:String = "GET", body: String? = null): String {
+    fun request(connectId: String, path: String, method: String = "GET", body: String? = null): String {
         val config = repository.getOne(UUID.fromString(connectId)).config
         val p = Properties()
         p.load(StringReader(config))
@@ -101,12 +84,12 @@ class KafkaConnectService(val repository: KafkaConnectConfigRepository) {
         val sb = StringBuffer()
         with(URL("$url$path").openConnection() as HttpURLConnection) {
             requestMethod = method
-            if(basicAuth) {
+            if (basicAuth) {
                 val encoded = Base64.getEncoder().encodeToString((username + ":" + password).toByteArray(StandardCharsets.UTF_8))  //Java 8
                 setRequestProperty("Authorization", "Basic $encoded")
             }
 
-            if(body != null) {
+            if (body != null) {
                 addRequestProperty("Content-Type", "application/json")
                 doOutput = true
                 getOutputStream().use {

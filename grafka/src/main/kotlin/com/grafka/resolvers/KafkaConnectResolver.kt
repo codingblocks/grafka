@@ -41,4 +41,12 @@ class KafkaConnectResolver(private val repository: KafkaConnectConfigRepository,
         }
         return KafkaConnect(item.get(), service)
     }
+
+    fun restartConnectors(connectId: String, names: List<String>) = service.restartConnectors(connectId, names)
+
+    fun pauseConnectors(connectId: String, names: List<String>) = service.pauseConnectors(connectId, names)
+
+    fun resumeConnectors(connectId: String, names: List<String>) = service.resumeConnectors(connectId, names)
+
+    fun removeConnectors(connectId: String, names: List<String>) = service.removeConnectors(connectId, names)
 }

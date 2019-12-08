@@ -30,8 +30,13 @@ type Mutation {
     # Connect
     newConnect(name: String!, config: String!): KafkaConnect!
     deleteConnect(connectId: ID!): Boolean
-    updateConnect(connectId: String!, name: String!, config: String!): KafkaConnect!
-    saveConnector(connectId: String!, name: String!, connectorConfig: String!): String
+    updateConnect(connectId: ID!, name: String!, config: String!): KafkaConnect!
+    ## Connectors
+    saveConnector(connectId: ID!, name: String!, connectorConfig: String!): String!
+    restartConnectors(connectId: ID!, names: [String!]!): Int!
+    pauseConnectors(connectId: ID!, names: [String!]!): Int!
+    resumeConnectors(connectId: ID!, names: [String!]!): Int!
+    removeConnectors(connectId: ID!, names: [String!]!): Int!
 
     # Topics: Note, not returning TopicListing because topic can be confirmed before it is retrievable
     newTopicByPartitionAndReplicationFactor(clusterId: ID!, topicName: String!, partitionCount: Int!, replicationFactor: Int!, configs: [KafkaTopicConfig]): Boolean
