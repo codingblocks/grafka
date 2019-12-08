@@ -57,6 +57,7 @@ type KafkaConnect {
     connectId: ID!
     config: String!
     name: String!
+    connectors: String!
 }
 
 type KafkaClusterDescription {

@@ -5,12 +5,14 @@ import com.coxautodev.graphql.tools.GraphQLQueryResolver
 import com.grafka.entities.KafkaConnect
 import com.grafka.entities.KafkaConnectConfig
 import com.grafka.repositories.KafkaConnectConfigRepository
+import com.grafka.services.KafkaConnectService
 import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class KafkaConnectResolver(private val repository: KafkaConnectConfigRepository) : GraphQLQueryResolver, GraphQLMutationResolver {
-    fun connect(connectId: String?) = connectClusterConfigs(connectId).map { KafkaConnect(it) }
+class KafkaConnectResolver(private val repository: KafkaConnectConfigRepository, private val service: KafkaConnectService) : GraphQLQueryResolver, GraphQLMutationResolver {
+    fun connect(connectId: String?) = connectClusterConfigs(connectId).map { KafkaConnect(it, service) }
+
     fun connectClusterConfigs(connectId: String?) = if (connectId != null) {
         listOf(repository.findById(UUID.fromString(connectId)).get())
     } else {
@@ -20,7 +22,7 @@ class KafkaConnectResolver(private val repository: KafkaConnectConfigRepository)
     fun newConnect(name: String, config: String): KafkaConnect {
         val item = KafkaConnectConfig(UUID.randomUUID(), name, config)
         repository.save(item)
-        return KafkaConnect(item)
+        return KafkaConnect(item, service)
     }
 
     fun deleteConnect(connectId: String): Boolean {
@@ -35,6 +37,6 @@ class KafkaConnectResolver(private val repository: KafkaConnectConfigRepository)
             it.config = config
             repository.save(it)
         }
-        return KafkaConnect(item.get())
+        return KafkaConnect(item.get(), service)
     }
 }
