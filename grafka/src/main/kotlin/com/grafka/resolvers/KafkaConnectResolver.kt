@@ -49,4 +49,5 @@ class KafkaConnectResolver(private val repository: KafkaConnectConfigRepository,
     fun resumeConnectors(connectId: String, names: List<String>) = service.resumeConnectors(connectId, names)
 
     fun removeConnectors(connectId: String, names: List<String>) = service.removeConnectors(connectId, names)
+
 }

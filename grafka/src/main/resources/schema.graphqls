@@ -6,8 +6,7 @@ schema {
 
 type Query {
     clusters(clusterId: ID): [KafkaCluster]
-
-    connect(connectId: ID): [KafkaConnect]
+    connect(connectId: ID): [KafkaConnect!]!
 
     consumerGroupListings(clusterId: ID!, partialConsumerGroupId: String, topicName: String): [KafkaConsumerGroupListing]!
     consumerGroupOffsets(clusterId: String!, groupId: String!): [KafkaOffset!]!
