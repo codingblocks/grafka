@@ -32,52 +32,48 @@ class KafkaConnectService(val repository: KafkaConnectConfigRepository) {
 //    }
 
 //
-//    @Get("/connectors")
-
-//
 //    @Get("/connectors/connector-plugins")
 //    fun getConnectorPlugins(name:String): String? {
-//        return simpleRequest("$connectUrl/connectors/${name}/status")
+//        return simpleRequest(connectId, "/connectors/${name}/status")
 //    }
 //
 //    @Get("/connector/{name}")
 //    fun getConnector(name:String): String? {
-//        return simpleRequest("$connectUrl/connectors/${name}")
+//        return simpleRequest(connectId, "/connectors/${name}")
 //    }
 //
 //    @Get("/connector/{name}/config")
 //    fun getConnectorConfig(name:String): String? {
-//        return simpleRequest("$connectUrl/connectors/${name}/config")
+//        return simpleRequest(connectId, "/connectors/${name}/config")
 //    }
 //
 //    @Get("/connector/{name}/status")
 //    fun getConnectorStatus(name:String): String? {
-//        return simpleRequest("$connectUrl/connectors/${name}/status")
+//        return simpleRequest(connectId, "/connectors/${name}/status")
 //    }
 //
-//    // POST
-//    @Post("/connectors/{name}")
-//    fun saveConnector(name:String, @Body json:String): String? {
-//        //val existingConfig = getConnectorConfig(json.name)
-//        // if it already exists, then delete it and re-create
-//        try {
-//            val result = simpleRequest("$connectUrl/connectors", "POST", json)
-//            service.initializeTopicWithDefaults(name)
-//            return result
-//        } catch(e:Exception) {
-//            // TODO only 409
-//            simpleRequest("$connectUrl/connectors/${name}", "DELETE")
-//            Thread.sleep(2000)
-//            val result = simpleRequest("$connectUrl/connectors", "POST", json)
-//            service.initializeTopicWithDefaults(name)
-//            return result
-//        }
-//    }
+
+    fun saveConnector(connectId: String, name:String, connectorConfig:String): String? {
+        // TODO should return KafkaConnector object instead of String!
+        // if it already exists, then delete it and re-create
+        try {
+            val result = request(connectId, "/connectors", "POST", connectorConfig)
+            //service.initializeTopicWithDefaults(name)
+            return result
+        } catch(e:Exception) {
+            // TODO only 409
+            request(connectId,"/connectors/${name}", "DELETE")
+            Thread.sleep(2000) // TODO setting for Race condition? Better way to wait?
+            val result = request(connectId, "/connectors", "POST", connectorConfig)
+            //service.initializeTopicWithDefaults(name)
+            return result
+        }
+    }
 //
 //    @Post("/connector/{name}/restart")
 //    fun restartConnector(name:String): String? {
 //        for (s in name.split(",")) {
-//            simpleRequest("$connectUrl/connectors/${s}/restart", "POST")
+//            simpleRequest(connectId, "/connectors/${s}/restart", "POST")
 //        }
 //        return "{}"
 //    }
@@ -88,7 +84,7 @@ class KafkaConnectService(val repository: KafkaConnectConfigRepository) {
 //    @Put("/connector/{name}/pause")
 //    fun pauseConnector(name:String): String? {
 //        for (s in name.split(",")) {
-//            simpleRequest("$connectUrl/connectors/${s}/pause", "PUT")
+//            simpleRequest(connectId, "/connectors/${s}/pause", "PUT")
 //        }
 //        return "{}"
 //    }
@@ -96,7 +92,7 @@ class KafkaConnectService(val repository: KafkaConnectConfigRepository) {
 //    @Put("/connector/{name}/resume")
 //    fun resumeConnector(name:String): String? {
 //        for (s in name.split(",")) {
-//            simpleRequest("$connectUrl/connectors/${s}/resume", "PUT")
+//            simpleRequest(connectId, "/connectors/${s}/resume", "PUT")
 //        }
 //        return "{}"
 //    }
@@ -106,7 +102,7 @@ class KafkaConnectService(val repository: KafkaConnectConfigRepository) {
 //    @Delete("/connector/{name}/remove")
 //    fun removeConnector(name:String): String? {
 //        for (s in name.split(",")) {
-//            simpleRequest("$connectUrl/connectors/${s}", "DELETE")
+//            simpleRequest(connectId, "/connectors/${s}", "DELETE")
 //        }
 //        return "{}"
 //    }
@@ -133,9 +129,9 @@ class KafkaConnectService(val repository: KafkaConnectConfigRepository) {
             if(body != null) {
                 addRequestProperty("Content-Type", "application/json")
                 doOutput = true
-                getOutputStream().use { os ->
+                getOutputStream().use {
                     val input = body.toByteArray(Charset.defaultCharset())
-                    os.write(input, 0, input.size)
+                    it.write(input, 0, input.size)
                 }
             }
 

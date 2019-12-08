@@ -6,6 +6,7 @@ schema {
 
 type Query {
     clusters(clusterId: ID): [KafkaCluster]
+
     connect(connectId: ID): [KafkaConnect]
 
     consumerGroupListings(clusterId: ID!, partialConsumerGroupId: String, topicName: String): [KafkaConsumerGroupListing]!
@@ -30,6 +31,7 @@ type Mutation {
     newConnect(name: String!, config: String!): KafkaConnect!
     deleteConnect(connectId: ID!): Boolean
     updateConnect(connectId: String!, name: String!, config: String!): KafkaConnect!
+    saveConnector(connectId: String!, name: String!, connectorConfig: String!): String
 
     # Topics: Note, not returning TopicListing because topic can be confirmed before it is retrievable
     newTopicByPartitionAndReplicationFactor(clusterId: ID!, topicName: String!, partitionCount: Int!, replicationFactor: Int!, configs: [KafkaTopicConfig]): Boolean

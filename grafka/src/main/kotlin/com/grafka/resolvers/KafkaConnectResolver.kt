@@ -13,6 +13,8 @@ import java.util.*
 class KafkaConnectResolver(private val repository: KafkaConnectConfigRepository, private val service: KafkaConnectService) : GraphQLQueryResolver, GraphQLMutationResolver {
     fun connect(connectId: String?) = connectClusterConfigs(connectId).map { KafkaConnect(it, service) }
 
+    fun saveConnector(connectId: String, name: String, connectorConfig: String) = service.saveConnector(connectId, name, connectorConfig)
+
     fun connectClusterConfigs(connectId: String?) = if (connectId != null) {
         listOf(repository.findById(UUID.fromString(connectId)).get())
     } else {
