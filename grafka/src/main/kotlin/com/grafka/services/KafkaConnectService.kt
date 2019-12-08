@@ -3,6 +3,7 @@ package com.grafka.services
 import KafkaConnector
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.grafka.entities.connect.KafkaConnectPlugin
 import com.grafka.entities.connect.KafkaConnectorStatus
 import com.grafka.repositories.KafkaConnectConfigRepository
 import org.springframework.stereotype.Service
@@ -16,46 +17,21 @@ import java.util.*
 @Service
 class KafkaConnectService(val repository: KafkaConnectConfigRepository) {
 
-    fun getConnectors(connectId:String): List<KafkaConnector> {
+    fun getConnectors(connectId:String, name: String? = null): List<KafkaConnector> {
         val response = request(connectId, "/connectors")
         val deserialized: List<String> = jacksonObjectMapper().readValue(response)
-        return deserialized.map{KafkaConnector(connectId, it, this)}
+        return deserialized.map{KafkaConnector(connectId, it, this)}.filter{name == null || it.name == name}
     }
 
     fun getConnectorStatus(connectId: String, name:String): KafkaConnectorStatus {
         val response = request(connectId, "/connectors/${name}/status")
-        val status: KafkaConnectorStatus = jacksonObjectMapper().readValue(response)
-        return status
+        return jacksonObjectMapper().readValue(response)
     }
 
-
-//    fun exportConfigs(name:String): String? {
-//        // yeah, this is ugly but I don't want to do the research right now!
-//        val allConfigs = name.split(",").map { getConnectorConfig(it) }.joinToString(",")
-//        return "[${allConfigs}]"
-//    }
-
-//
-//    @Get("/connectors/connector-plugins")
-//    fun getConnectorPlugins(name:String): String? {
-//        return simpleRequest(connectId, "/connectors/${name}/status")
-//    }
-//
-//    @Get("/connector/{name}")
-//    fun getConnector(name:String): String? {
-//        return simpleRequest(connectId, "/connectors/${name}")
-//    }
-//
-//    @Get("/connector/{name}/config")
-//    fun getConnectorConfig(name:String): String? {
-//        return simpleRequest(connectId, "/connectors/${name}/config")
-//    }
-//
-//    @Get("/connector/{name}/status")
-//    fun getConnectorStatus(name:String): String? {
-//        return simpleRequest(connectId, "/connectors/${name}/status")
-//    }
-//
+    fun getConnectorPlugins(connectId:String): List<KafkaConnectPlugin> {
+        val response = request(connectId, "/connector-plugins")
+        return jacksonObjectMapper().readValue(response)
+    }
 
     fun saveConnector(connectId: String, name:String, connectorConfig:String): String? {
         // TODO should return KafkaConnector object instead of String!

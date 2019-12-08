@@ -79,6 +79,11 @@ mutation {
     name
     config
     connectId
+    plugins {
+      className
+      type
+      version
+    }
     connectors {
       name
       status {
@@ -214,6 +219,11 @@ mutation {
     name
     config
     connectId
+    plugins {
+      className
+      type
+      version
+    }
     connectors {
       name
       status {

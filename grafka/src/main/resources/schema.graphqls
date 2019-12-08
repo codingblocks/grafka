@@ -59,12 +59,19 @@ type KafkaConnect {
     connectId: ID!
     config: String!
     name: String!
-    connectors: [KafkaConnector!]!
+    plugins: [KafkaConnectPlugin]
+    connectors(name: String): [KafkaConnector!]!
 }
 
 type KafkaConnector {
     name: String!
     status: KafkaConnectorStatus!
+}
+
+type KafkaConnectPlugin {
+    className: String
+    type: String
+    version: String
 }
 
 type KafkaConnectorStatus {
