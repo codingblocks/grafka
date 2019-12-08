@@ -99,6 +99,12 @@ mutation {
 }
 ```
 
+*Additional features*
+* getPlugins
+* pauseConnectors
+* resumeConnectors
+* removeConnectors
+
 
 ## Lots of information!
 

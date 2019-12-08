@@ -38,21 +38,21 @@ The graphql endpoint runs at http://localhost:9000/graphql by default.
    * ~~Topics~~
    * ~~Consumer Groups~~
    * ~~Schema~~
-   * Messages (limited)
-   * Connect
-   * KSQL
-* Mutating (~10% done)
+   * ~~Messages~~
+   * ~~Connect~~
+* Mutating
    * ~~Cluster Config~~
-   * Topics (limited)
+   * ~~Topics~~
+   * ~~Connectors~~
    * Consumer Group Resetting
-   * Connectors
    * Schema
 * UI (~5% done)
    * Near real-time updates
    * Security
    * Easy export/search topics
    * Action logging, auditing
-   * Defaults
+* Miscellaenous 0%
+   * KSQL
 
 ## Major components
 
