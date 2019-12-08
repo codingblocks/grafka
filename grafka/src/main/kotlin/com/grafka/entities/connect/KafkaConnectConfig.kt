@@ -1,4 +1,4 @@
-package com.grafka.entities
+package com.grafka.entities.connect
 
 import java.util.*
 import javax.persistence.*

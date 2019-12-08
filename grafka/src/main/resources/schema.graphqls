@@ -59,7 +59,30 @@ type KafkaConnect {
     connectId: ID!
     config: String!
     name: String!
-    connectors: String!
+    connectors: [KafkaConnector!]!
+}
+
+type KafkaConnector {
+    name: String!
+    status: KafkaConnectorStatus!
+}
+
+type KafkaConnectorStatus {
+    name: String
+    connector: KafkaConnectorStatusConnector
+    tasks: [KafkaConnectorTask!]!
+    type: String
+}
+
+type KafkaConnectorStatusConnector {
+    state: String
+    workerId: String
+}
+
+type KafkaConnectorTask {
+    id: String
+    state: String
+    workerId: String
 }
 
 type KafkaClusterDescription {

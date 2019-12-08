@@ -1,5 +1,9 @@
 package com.grafka.services
 
+import KafkaConnector
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.grafka.entities.connect.KafkaConnectorStatus
 import com.grafka.repositories.KafkaConnectConfigRepository
 import org.springframework.stereotype.Service
 import java.io.StringReader
@@ -12,18 +16,18 @@ import java.util.*
 @Service
 class KafkaConnectService(val repository: KafkaConnectConfigRepository) {
 
-    fun getConnectors(connectId:String) = request(connectId, "/connectors")
+    fun getConnectors(connectId:String): List<KafkaConnector> {
+        val response = request(connectId, "/connectors")
+        val deserialized: List<String> = jacksonObjectMapper().readValue(response)
+        return deserialized.map{KafkaConnector(connectId, it, this)}
+    }
 
-//    fun getConnectorStatus(): String? {
-//        val connectorJson = getConnectors()!!
-//        val connectorList = Regex("[^\\w,_-]").replace(connectorJson, "").split(",")
-//        if(connectorList.size == 1 && connectorList.first() == "") {
-//            return "[]"
-//        }
-//        // yeah, this is ugly but I don't want to do the research right now!
-//        val allStatus = connectorList.map { getConnectorStatus(it) }.joinToString(",")
-//        return "[${allStatus}]"
-//    }
+    fun getConnectorStatus(connectId: String, name:String): KafkaConnectorStatus {
+        val response = request(connectId, "/connectors/${name}/status")
+        val status: KafkaConnectorStatus = jacksonObjectMapper().readValue(response)
+        return status
+    }
+
 
 //    fun exportConfigs(name:String): String? {
 //        // yeah, this is ugly but I don't want to do the research right now!

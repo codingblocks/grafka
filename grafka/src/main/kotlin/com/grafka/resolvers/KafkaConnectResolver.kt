@@ -2,8 +2,8 @@ package com.grafka.resolvers
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver
 import com.coxautodev.graphql.tools.GraphQLQueryResolver
-import com.grafka.entities.KafkaConnect
-import com.grafka.entities.KafkaConnectConfig
+import com.grafka.entities.connect.KafkaConnect
+import com.grafka.entities.connect.KafkaConnectConfig
 import com.grafka.repositories.KafkaConnectConfigRepository
 import com.grafka.services.KafkaConnectService
 import org.springframework.stereotype.Component

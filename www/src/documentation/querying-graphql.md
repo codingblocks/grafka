@@ -74,10 +74,22 @@ mutation {
 *Querying all connectors*
 
 ```graphql
-query {
+{
   connect {
     name
-    connectors
+    config
+    connectId
+    connectors {
+      name
+      status {
+        name
+        type
+        connector {
+          state
+          workerId
+        }
+      }
+    }
   }
 }
 ```
@@ -199,9 +211,20 @@ query {
     }
   }
   connect {
-    connectId
     name
     config
+    connectId
+    connectors {
+      name
+      status {
+        name
+        type
+        connector {
+          state
+          workerId
+        }
+      }
+    }
   }
 }
 ```
