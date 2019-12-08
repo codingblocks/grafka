@@ -2,15 +2,19 @@ package com.grafka.resolvers
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver
 import com.coxautodev.graphql.tools.GraphQLQueryResolver
-import com.grafka.entities.KafkaConnect
-import com.grafka.entities.KafkaConnectConfig
+import com.grafka.entities.connect.KafkaConnect
+import com.grafka.entities.connect.KafkaConnectConfig
 import com.grafka.repositories.KafkaConnectConfigRepository
+import com.grafka.services.KafkaConnectService
 import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class KafkaConnectResolver(private val repository: KafkaConnectConfigRepository) : GraphQLQueryResolver, GraphQLMutationResolver {
-    fun connect(connectId: String?) = connectClusterConfigs(connectId).map { KafkaConnect(it) }
+class KafkaConnectResolver(private val repository: KafkaConnectConfigRepository, private val service: KafkaConnectService) : GraphQLQueryResolver, GraphQLMutationResolver {
+    fun connect(connectId: String?) = connectClusterConfigs(connectId).map { KafkaConnect(it, service) }
+
+    fun saveConnector(connectId: String, name: String, connectorConfig: String) = service.saveConnector(connectId, name, connectorConfig)
+
     fun connectClusterConfigs(connectId: String?) = if (connectId != null) {
         listOf(repository.findById(UUID.fromString(connectId)).get())
     } else {
@@ -20,7 +24,7 @@ class KafkaConnectResolver(private val repository: KafkaConnectConfigRepository)
     fun newConnect(name: String, config: String): KafkaConnect {
         val item = KafkaConnectConfig(UUID.randomUUID(), name, config)
         repository.save(item)
-        return KafkaConnect(item)
+        return KafkaConnect(item, service)
     }
 
     fun deleteConnect(connectId: String): Boolean {
@@ -35,6 +39,15 @@ class KafkaConnectResolver(private val repository: KafkaConnectConfigRepository)
             it.config = config
             repository.save(it)
         }
-        return KafkaConnect(item.get())
+        return KafkaConnect(item.get(), service)
     }
+
+    fun restartConnectors(connectId: String, names: List<String>) = service.restartConnectors(connectId, names)
+
+    fun pauseConnectors(connectId: String, names: List<String>) = service.pauseConnectors(connectId, names)
+
+    fun resumeConnectors(connectId: String, names: List<String>) = service.resumeConnectors(connectId, names)
+
+    fun removeConnectors(connectId: String, names: List<String>) = service.removeConnectors(connectId, names)
+
 }

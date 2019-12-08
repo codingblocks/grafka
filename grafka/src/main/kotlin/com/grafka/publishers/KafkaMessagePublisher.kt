@@ -2,7 +2,7 @@ package com.grafka.publishers
 
 import com.grafka.entities.KafkaCluster
 import com.grafka.entities.KafkaMessage
-import com.grafka.resolvers.KafkaClusterQueryResolver
+import com.grafka.resolvers.KafkaClusterResolver
 import org.apache.avro.generic.GenericRecord
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -14,7 +14,7 @@ import java.time.Instant
 import java.util.*
 
 @Component
-class KafkaMessagePublisher(private val kafkaClusterQueryResolver: KafkaClusterQueryResolver) {
+class KafkaMessagePublisher(private val kafkaClusterQueryResolver: KafkaClusterResolver) {
 
     private val log = LoggerFactory.getLogger(javaClass)
 
