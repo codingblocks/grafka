@@ -94,6 +94,7 @@ type KafkaConnectorTask {
     id: String
     state: String
     workerId: String
+    trace: String
 }
 
 type KafkaClusterDescription {

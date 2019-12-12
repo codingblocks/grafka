@@ -7,4 +7,5 @@ class KafkaConnectorTask {
     var state: String? = null
     @JsonProperty("worker_id")
     var workerId: String? = null
+    var trace: String? = null
 }
