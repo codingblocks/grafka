@@ -69,6 +69,11 @@ export default function ButtonAppBar() {
           <ListItemText primary="Clusters" />
         </ListItem>
 
+        <ListItem button component="a" href="/kafka/connect">
+          <ListItemIcon><Settings.icons.Connect /></ListItemIcon>
+          <ListItemText primary="Connect" />
+        </ListItem>
+
         <ListItem button component="a" href="/preferences">
           <ListItemIcon><Settings.icons.Settings /></ListItemIcon>
           <ListItemText primary="Preferences" />

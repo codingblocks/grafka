@@ -5,6 +5,7 @@ import AppBar from "./AppBar";
 import Home from "./Home";
 import Preferences, { getCurrentTheme } from "./settings/Preferences";
 import KafkaClusters from "./kafka/clusters/Home";
+import KafkaConnect from "./kafka/connect/Home";
 import KafkaConsumerGroups from "./kafka/consumerGroups/Home";
 import KafkaTopics from "./kafka/topics/Home";
 import KafkaTopic from "./kafka/topics/Topic";
@@ -70,6 +71,9 @@ function App() {
                 <Route path="/kafka/:clusterId/topics" component={KafkaTopics} />
                 <Route path="/kafka/:clusterId/:topic/:selectedTab" component={KafkaTopic} />
                 <Route path="/kafka/:clusterId/:topic" component={KafkaTopic} />
+                <Route path="/kafka/connect">
+                  <KafkaConnect />
+                </Route>
                 <Route path="/preferences">
                   <Preferences
                     themeChangedCallback={() => setTheme(getCurrentTheme())}
