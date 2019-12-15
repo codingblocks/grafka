@@ -56,8 +56,15 @@ export default function Grid({ results, dataChangeHandler }) {
           )
         }}
         columns={[
-          { title: "Name", field: "name" },
-          { title: "ConnectId", field: "connectId", editComponent: _ => null },
+          {
+            title: "Name",
+            field: "name",
+            render: v => <Link href={`/kafka/connect/${v.connectId}`}>{v.name}</Link> },
+          {
+            title: "ConnectId",
+            field: "connectId",
+            editComponent: _ => null
+          },
           {
             title: "Config",
             field: "config",
@@ -79,7 +86,7 @@ export default function Grid({ results, dataChangeHandler }) {
           {
             title: "Connectors",
             field: "connectors",
-            render: v => `${v.connectors.length} (${v.connectors.filter(c => c.state === "RUNNING").length} running`,
+            render: v => `${v.connectors.length} (${v.connectors.filter(c => c.state === "RUNNING").length} running)`,
             editComponent: _ => null
           }
         ]}

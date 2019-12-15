@@ -93,7 +93,7 @@ export default function Grid({ results, dataChangeHandler }) {
             field: "totalTopicCount",
             render: v => {
               return v.totalTopicCount > 0
-                ? <Link href={`/kafka/${v.clusterId}/topics`}>{`${v.totalTopicCount} (${v.internalTopicCount})`}</Link>
+                ? <Link href={`/kafka/clusters/${v.clusterId}/topics`}>{`${v.totalTopicCount} (${v.internalTopicCount})`}</Link>
                 : 0
             },
             editComponent: _ => null
@@ -104,7 +104,7 @@ export default function Grid({ results, dataChangeHandler }) {
             editComponent: _ => null,
             render: v => {
               return v.consumerGroupCount > 0
-                ? <Link href={`/kafka/${v.clusterId}/consumer-groups`}>{`${v.consumerGroupCount} (${v.consumerGroupCount})`}</Link>
+                ? <Link href={`/kafka/clusters/${v.clusterId}/consumer-groups`}>{`${v.consumerGroupCount} (${v.consumerGroupCount})`}</Link>
                 : 0
             }
           }
