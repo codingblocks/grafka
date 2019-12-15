@@ -4,6 +4,8 @@ services:
     image: postgres
     ports:
       - "5432:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
   www:
     depends_on:
       - db
@@ -129,3 +131,5 @@ services:
       KAFKA_REST_DEBUG: "true"
     ports:
       - 8082:8082
+volumes:
+  db:
