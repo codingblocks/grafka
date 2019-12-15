@@ -5,6 +5,7 @@ import {
   Public,
   RemoveRedEye,
   Settings,
+  SettingsEthernet,
   Subscriptions,
   Storage
 } from "@material-ui/icons/";
@@ -18,6 +19,7 @@ export default {
     ConsumerGroups: RemoveRedEye,
     Close,
     Clusters: Storage,
+    Connect: SettingsEthernet,
     Home,
     QueryUI: Public,
     Settings,

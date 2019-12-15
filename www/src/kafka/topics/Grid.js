@@ -45,7 +45,7 @@ export default function Grid({ results }) {
             title: "Name",
             field: "name",
             render: v => (
-              <Link href={`/kafka/${v.clusterId}/${v.name}`}>{v.name}</Link>
+              <Link href={`/kafka/clusters/${v.clusterId}/topic/${v.name}`}>{v.name}</Link>
             )
           },
           {

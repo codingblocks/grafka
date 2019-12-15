@@ -4,6 +4,7 @@ import Messages from "./messages/Messages";
 import Configs from "./Configs";
 import BasicDetails from "./BasicDetails";
 import Partitions from "./Partitions";
+import QuerySamples from "./QuerySamples";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -65,7 +66,8 @@ export default function Home({ clusterName, topicData, selectedTab }) {
           <Tab label="Consumer Groups" {...a11yProps(3)} />
           <Tab label="Schema" {...a11yProps(4)} />
           <Tab label="Messages" {...a11yProps(5)} />
-          <Tab label="Coming soon" {...a11yProps(6)} />
+          <Tab label="GraphQL Examples" {...a11yProps(6)} />
+          <Tab label="Coming soon" {...a11yProps(7)} />
         </Tabs>
       </AppBar>
       <Box>
@@ -92,6 +94,9 @@ export default function Home({ clusterName, topicData, selectedTab }) {
           />
         </TabPanel>
         <TabPanel value={value} index={6}>
+          <QuerySamples />
+        </TabPanel>
+        <TabPanel value={value} index={7}>
           <p>Coming soon</p>
           <ul>
             <li>Mutations</li>

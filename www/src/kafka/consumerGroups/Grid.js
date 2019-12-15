@@ -63,7 +63,7 @@ export default function Grid({ results, dataChangeHandler }) {
               const topics = Array
                 .from(new Set(v.offsets.map(o => o.topicName)))
                 .sort()
-                .map(t => <Link href={`/kafka/${v.clusterId}/topic/${t}`}>{t}</Link>);
+                .map(t => <Link href={`/kafka/clusters/${v.clusterId}/topic/${t}`}>{t}</Link>);
               return topics.map((t, i) => <React.Fragment>{t}{i === topics.length - 1 ? "" : ", "}</React.Fragment>)
             }
           }

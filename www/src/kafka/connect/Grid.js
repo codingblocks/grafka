@@ -45,7 +45,7 @@ export default function Grid({ results, dataChangeHandler }) {
     <React.Fragment>
       <MaterialTable
         icons={tableIcons}
-        title="Cluster Configurations"
+        title="Connect Configurations"
         components={{
           Container: props => (
             <Paper
@@ -56,16 +56,13 @@ export default function Grid({ results, dataChangeHandler }) {
           )
         }}
         columns={[
-          { title: "Name", field: "name" },
-          { title: "ClusterId", field: "clusterId", editComponent: _ => null },
           {
-            title: "Controller",
-            field: "config",
-            render: v => {
-              return v.description && v.description.controller
-                ? `${v.description.controller.host}:${v.description.controller.port}`
-                : "Error!"
-            },
+            title: "Name",
+            field: "name",
+            render: v => <Link href={`/kafka/connect/${v.connectId}`}>{v.name}</Link> },
+          {
+            title: "ConnectId",
+            field: "connectId",
             editComponent: _ => null
           },
           {
@@ -81,46 +78,30 @@ export default function Grid({ results, dataChangeHandler }) {
             )
           },
           {
-            title: "Nodes",
-            field: "config",
-            render: v => {
-              return v.description ? v.description.nodes.length : "Error!"
-            },
+            title: "Plugins",
+            field: "plugins",
+            render: v => v.plugins.length,
             editComponent: _ => null
           },
           {
-            title: "Topics (Internal)",
-            field: "totalTopicCount",
-            render: v => {
-              return v.totalTopicCount > 0
-                ? <Link href={`/kafka/clusters/${v.clusterId}/topics`}>{`${v.totalTopicCount} (${v.internalTopicCount})`}</Link>
-                : 0
-            },
+            title: "Connectors",
+            field: "connectors",
+            render: v => `${v.connectors.length} (${v.connectors.filter(c => c.state === "RUNNING").length} running)`,
             editComponent: _ => null
-          },
-          {
-            title: "Consumer Groups",
-            field: "consumerGroupCount",
-            editComponent: _ => null,
-            render: v => {
-              return v.consumerGroupCount > 0
-                ? <Link href={`/kafka/clusters/${v.clusterId}/consumer-groups`}>{`${v.consumerGroupCount} (${v.consumerGroupCount})`}</Link>
-                : 0
-            }
           }
         ]}
         data={results}
         editable={{
           onRowDelete: oldData =>
-            onAction(`mutation { deleteCluster(clusterId:"${oldData.clusterId}") }`),
+            onAction(`mutation { deleteConnect(connectId:"${oldData.connectId}") }`),
           onRowUpdate: newData =>
             onAction(
-              `mutation($clusterId: String!, $name: String!, $config: String!) { updateCluster(clusterId: $clusterId, name: $name, config: $config) { clusterId name config }}`,
+              `mutation($connectId: String!, $name: String!, $config: String!) { updateConnect(connectId: $connectId, name: $name, config: $config) { connectId name config }}`,
               newData
             ),
           onRowAdd: newData =>
             onAction(
-              `mutation($name: String!, $config: String!) { newCluster(name: $name, config: $config) { clusterId name config }}`,
+              `mutation($name: String!, $config: String!) { newConnect(name: $name, config: $config) { connectId name config }}`,
               { name: newData.name, config: newData.config }
             )
         }}
