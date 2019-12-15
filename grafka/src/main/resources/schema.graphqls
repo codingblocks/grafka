@@ -69,6 +69,7 @@ type KafkaConnect {
 
 type KafkaConnector {
     name: String!
+    config: String!
     status: KafkaConnectorStatus!
 }
 

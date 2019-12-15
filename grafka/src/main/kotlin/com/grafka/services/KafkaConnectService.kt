@@ -23,6 +23,8 @@ class KafkaConnectService(val repository: KafkaConnectConfigRepository) {
         return deserialized.map { KafkaConnector(connectId, it, this) }.filter { name == null || it.name == name }
     }
 
+    fun getConnectorConfig(connectId: String, name: String) = request(connectId, "/connectors/${name}")
+
     fun getConnectorStatus(connectId: String, name: String): KafkaConnectorStatus {
         val response = request(connectId, "/connectors/${name}/status")
         return jacksonObjectMapper().readValue(response)

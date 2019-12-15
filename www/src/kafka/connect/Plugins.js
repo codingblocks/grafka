@@ -13,13 +13,11 @@ export default ({ data }) => {
 
   return (
     <React.Fragment>
-      <h3>Plugins</h3>
-
       <Grid container spacing={2}>
         {Object.keys(splitData).map(t => (
           <React.Fragment key={t}>
             <Grid item xs={6}>
-              <h4>{t}</h4>
+              <h4>{t} plugins</h4>
               <ul>
                 {splitData[t]
                   .map(p => `${p.className}:${p.version}`)
@@ -31,7 +29,7 @@ export default ({ data }) => {
           </React.Fragment>
         ))}
       </Grid>
-      <p>Find more connectors: <Link href="https://www.confluent.io/hub/>https://www.confluent.io/hub/">https://www.confluent.io/hub/>https://www.confluent.io/hub/</Link></p>
+      <p>Find more connectors: <Link href="https://www.confluent.io/hub/">https://www.confluent.io/hub/</Link></p>
     </React.Fragment>
   );
 };
