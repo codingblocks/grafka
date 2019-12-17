@@ -38,11 +38,11 @@ export default function Home({
       hasResults &&
       !error &&
       displayData.clusters.length === 1 &&
-      displayData.clusters[0].topicListings.length === 1;
+      displayData.clusters[0].topicListings.length >= 1;
 
     if (displayMetadata) {
       const clusterName = displayData.clusters[0].name;
-      const topicData = displayData.clusters[0].topicListings[0];
+      const topicData = displayData.clusters[0].topicListings.find(x => x.name === topic);
       return <Metadata clusterName={clusterName} topicData={topicData} selectedTab={selectedTab}/>;
     }
     return <span>Loading metadata</span>;
